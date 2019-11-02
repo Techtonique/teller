@@ -1,9 +1,9 @@
 import numpy as np
-#from os import chdir
-#
-#wd="/Users/moudiki/Documents/Python_Packages/teller"
-#
-#chdir(wd)
+from os import chdir
+
+wd="/Users/moudiki/Documents/Python_Packages/teller"
+
+chdir(wd)
 
 import teller as tr
 import pandas as pd
@@ -38,9 +38,12 @@ print(regr.coef_)
 # creating the explainer
 df_test = pd.DataFrame(data = np.column_stack((X_test, y_test)), 
                        columns = col_names)
+
 expr = tr.Explainer(obj=regr, df=df_test, target='MEDV')
+
 # print(expr.get_params())
 
+#expr = tr.Explainer(obj=regr, df=df_test, target='MEDV', n_jobs=2)
 
 # fitting the explainer
 expr.fit()

@@ -10,7 +10,7 @@ from ..utils import (
 
 
 class Explainer(BaseEstimator):
-    """class Explainer.
+    """class_ Explainer.
         
        Parameters
        ----------
@@ -24,11 +24,12 @@ class Explainer(BaseEstimator):
 
     # construct the object -----
 
-    def __init__(self, obj, df, target):
+    def __init__(self, obj, df, target, n_jobs=None):
 
         self.obj = obj
         self.df = df
         self.target = target
+        self.n_jobs = n_jobs
 
     # fit the object -----
 
@@ -45,12 +46,14 @@ class Explainer(BaseEstimator):
             col_names = col_names[cond_training]
 
             X = df.iloc[:, cond_training].values
+            n, p = X.shape
 
             # for classification, must be a prob
             y = df[target].values
 
             y_hat = obj.predict(X)
-            grad = numerical_gradient(obj.predict, X)
+            grad = numerical_gradient(obj.predict, X, 
+                                      n_jobs=self.n_jobs)
 
             res_df = pd.DataFrame(
                 data=grad, columns=col_names
@@ -78,16 +81,17 @@ class Explainer(BaseEstimator):
 
             # heterogeneity of effects
             self.y_mean = np.mean(y)
-            sstot = np.sum((y - self.y_mean) ** 2)
-            ssreg = np.sum((y_hat - self.y_mean) ** 2)
-            ssres = np.sum((y - y_hat) ** 2)
+            ss_tot = np.sum((y - self.y_mean) ** 2)
+            ss_reg = np.sum((y_hat - self.y_mean) ** 2)
+            ss_res = np.sum((y - y_hat) ** 2)
 
             # heterogeneity of effects
             self.effects_ = df_effects.sort_values(
                 by=["mean"]
             )
             self.residuals_ = y - y_hat
-            self.r_squared_ = 1 - ssres / sstot
+            self.r_squared_ = 1 - ss_res / ss_tot
+            self.adj_r_squared_ = 1 - (1 - self.r_squared_)*(n-1)/(n-p-1)
 
             return self
 
