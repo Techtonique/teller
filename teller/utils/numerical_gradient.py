@@ -6,8 +6,9 @@ from joblib import Parallel, delayed
 from tqdm import tqdm
 
 
+
 @memoize
-def numerical_gradient(f, X, h=None, n_jobs=None):
+def numerical_gradient(f, X, h=None, n_jobs=None, verbose=1):
 
     n, p = X.shape
     grad = np.zeros_like(X)
@@ -19,10 +20,11 @@ def numerical_gradient(f, X, h=None, n_jobs=None):
         if h is not None:
     
             double_h = 2 * h
-    
-            print("\n")
-            print("Calculating the effects...")
-            pbar = Progbar(p)
+            
+            if verbose == 1:                 
+                print("\n")
+                print("Calculating the effects...")
+                pbar = Progbar(p)
     
             for ix in range(p):
     
@@ -38,9 +40,10 @@ def numerical_gradient(f, X, h=None, n_jobs=None):
                 grad[:, ix] = (fx_plus - fx_minus) / double_h
     
                 pbar.update(ix)
-    
-            pbar.update(p)
-            print("\n")
+            
+            if verbose == 1: 
+                pbar.update(p)
+                print("\n")
     
             return grad
     
@@ -48,10 +51,11 @@ def numerical_gradient(f, X, h=None, n_jobs=None):
     
         zero = np.finfo(float).eps
         eps_factor = zero ** (1 / 3)
-    
-        print("\n")
-        print("Calculating the effects...")
-        pbar = Progbar(p)
+        
+        if verbose == 1: 
+            print("\n")
+            print("Calculating the effects...")
+            pbar = Progbar(p)
     
         for ix in range(p):
     
@@ -71,11 +75,13 @@ def numerical_gradient(f, X, h=None, n_jobs=None):
             X[:, ix] = value_x  # restore (!)
     
             grad[:, ix] = (fx_plus - fx_minus) / (2 * h)
-    
-            pbar.update(ix)
-    
-        pbar.update(p)
-        print("\n")
+            
+            if verbose == 1: 
+                pbar.update(ix)
+        
+        if verbose == 1: 
+            pbar.update(p)
+            print("\n")
     
         return grad
     
@@ -103,11 +109,18 @@ def numerical_gradient(f, X, h=None, n_jobs=None):
 
         grad[:, ix] = (fx_plus - fx_minus) / (2 * h)
     
-    print("\n")
-    print("Calculating the effects...")                
+    if verbose == 1: 
+        print("\n")
+        print("Calculating the effects...")                
+        Parallel(n_jobs=n_jobs, prefer="threads")(
+                 delayed(gradient_column)(m)
+                 for m in tqdm(range(p)))
+        print("\n")
+    
+        return grad
+
     Parallel(n_jobs=n_jobs, prefer="threads")(
              delayed(gradient_column)(m)
-             for m in tqdm(range(p)))
-    print("\n")
-    
+             for m in range(p))
+
     return grad

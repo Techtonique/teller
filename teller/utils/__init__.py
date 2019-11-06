@@ -8,6 +8,7 @@ from .misc import (
     tuple_insert,
 )
 from .numerical_gradient import numerical_gradient
+from .numerical_gradient_jackknife import numerical_gradient_jackknife
 from .progress_bar import Progbar
 
 
@@ -20,5 +21,6 @@ __all__ = [
     "is_factor",
     "tuple_insert",
     "numerical_gradient",
+    "numerical_gradient_jackknife",
     "Progbar",
 ]
