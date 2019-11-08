@@ -8,7 +8,9 @@ from .misc import (
     tuple_insert,
 )
 from .numerical_gradient import numerical_gradient
-from .numerical_gradient_jackknife import numerical_gradient_jackknife
+from .numerical_gradient_jackknife import (
+    numerical_gradient_jackknife,
+)
 from .progress_bar import Progbar
 
 
