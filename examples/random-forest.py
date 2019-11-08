@@ -35,17 +35,21 @@ regr.fit(X_train, y_train)
 
 
 # creating the explainer
-df_test = pd.DataFrame(data = np.column_stack((X_test, y_test)), 
-                       columns = col_names)
-expr = tr.Explainer(obj=regr, df=df_test, target='MEDV')
+expr = tr.Explainer(obj=regr)
+
 
 # print(expr.get_params())
 
-# expr = tr.Explainer(obj=regr, df=df_test, target='MEDV', n_jobs=2)
 
 # fitting the explainer
-expr.fit()
+expr.fit(X_test, y_test, X_names=col_names[:-1], y_name=col_names[-1], method="avg")
 
 
 # heterogeneity of effects
-print(expr.effects_)
+print(expr.summary())
+
+
+# confidence int. and tests on effects
+expr.fit(X_test, y_test, X_names=col_names[:-1], y_name=col_names[-1], method="ci")
+
+print(expr.summary())

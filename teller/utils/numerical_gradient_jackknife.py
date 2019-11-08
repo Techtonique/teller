@@ -1,14 +1,35 @@
 import numpy as np
-from .deepcopy import deepcopy
 from .memoize import memoize
 from .progress_bar import Progbar
 from joblib import Parallel, delayed
 from tqdm import tqdm
 from .numerical_gradient import numerical_gradient
+from scipy.stats import t
+
+
+def get_code_pval(pval):
+    
+    assert (pval >= 0) & (pval <= 1), "must have pval >= 0 & pval <= 1"
+    
+    if (pval >= 0) & (pval < 0.001):
+      return "***"
+
+    if (pval >= 0.001) & (pval < 0.01):
+      return "**"
+
+    if (pval >= 0.01) & (pval < 0.05):
+      return "*"
+
+    if (pval >= 0.05) & (pval < 0.1):
+      return "."
+
+    if (pval >= 0.1):
+      return " "
 
 
 @memoize
-def numerical_gradient_jackknife(f, X, h=None, n_jobs=None):
+def numerical_gradient_jackknife(f, X, level=95, 
+                                 h=None, n_jobs=None):
     
     n, p = X.shape
     mean_grads = []
@@ -37,9 +58,22 @@ def numerical_gradient_jackknife(f, X, h=None, n_jobs=None):
         
         mean_est = np.mean(mean_grads, axis=0)
         
-        se_est = ((n-1)*np.var(mean_grads, axis=0))**0.5
+        se_est = np.clip(((n-1)*np.var(mean_grads, axis=0))**0.5, 
+                     a_min=np.finfo(float).eps, 
+                     a_max=None)
         
-        return mean_est, se_est
+        t_est = mean_est/se_est
+                
+        qt = t.ppf(1 - (1 - level/100)*0.5, n-1)
+        
+        p_values = 2*t.sf(x=np.abs(t_est), df=n-1)            
+        
+        # cat("Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1", "\n")
+        signif_codes = [get_code_pval(elt) for elt in p_values]
+        
+        return (mean_est, se_est, 
+            mean_est + qt*se_est, mean_est - qt*se_est, 
+            p_values, signif_codes)
     
     
     # if n_jobs is not None:    
@@ -59,6 +93,19 @@ def numerical_gradient_jackknife(f, X, h=None, n_jobs=None):
         
     mean_est = np.mean(mean_grads, axis=0)
     
-    se_est = ((n-1)*np.var(mean_grads, axis=0))**0.5
+    se_est = np.clip(((n-1)*np.var(mean_grads, axis=0))**0.5, 
+                     a_min=np.finfo(float).eps, 
+                     a_max=None)
     
-    return mean_est, se_est
+    t_est = mean_est/se_est
+    
+    qt = t.ppf(1 - (1 - level/100)*0.5, n-1)
+    
+    p_values = 2*t.sf(x=np.abs(t_est), df=n-1)
+    
+    # cat("Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1", "\n")
+    signif_codes = [get_code_pval(elt) for elt in p_values]
+        
+    return (mean_est, se_est, 
+            mean_est + qt*se_est, mean_est - qt*se_est, 
+            p_values, signif_codes)

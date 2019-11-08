@@ -36,18 +36,15 @@ print(regr.coef_)
 
 
 # creating the explainer
-df_test = pd.DataFrame(data = np.column_stack((X_test, y_test)), 
-                       columns = col_names)
+expr = tr.Explainer(obj=regr)
 
-expr = tr.Explainer(obj=regr, df=df_test, target='MEDV')
 
 # print(expr.get_params())
 
-#expr = tr.Explainer(obj=regr, df=df_test, target='MEDV', n_jobs=2)
 
 # fitting the explainer
-expr.fit()
+expr.fit(X_test, y_test, X_names=col_names[:-1], y_name=col_names[-1])
 
 
-# heterogeneity of effects (to be compared to regr.coef_)
-print(expr.effects_)
+# heterogeneity of effects
+print(expr.summary())

@@ -6,6 +6,7 @@ from ..utils import (
     is_factor,
     memoize,
     numerical_gradient,
+    numerical_gradient_jackknife
 )
 
 
@@ -23,43 +24,48 @@ class Explainer(BaseEstimator):
            name of the target variable (response, variable to be explained)
     """
 
+
     # construct the object -----
 
-    def __init__(self, obj, df, target, n_jobs=None):
+    def __init__(self, obj, n_jobs=None):
 
         self.obj = obj
-        self.df = df
-        self.target = target
         self.n_jobs = n_jobs
+        self.y_mean_ = None
+        self.effects_ = None
+        self.residuals_ = None
+        self.r_squared_ = None
+        self.adj_r_squared_ = None
+        self.effects_ = None
+        self.ci_ = None        
+
 
     # fit the object -----
 
-    def fit(self):
+    def fit(self, X, y, X_names, y_name, 
+            method="avg", level=95):
 
-        obj = self.obj
-        df = self.df
-        target = self.target
+        assert method in ("avg", "ci"), "must have: `method` in ('avg', 'ci')"
+        
+        n, p = X.shape
+        
+        self.X_names = X_names
+        self.y_name = y_name
+        self.level = level
 
-        if isinstance(df, pd.DataFrame):
-
-            col_names = df.columns.values
-            cond_training = col_names != target
-            col_names = col_names[cond_training]
-
-            X = df.iloc[:, cond_training].values
-            n, p = X.shape
-
-            # for classification, must be a prob
-            y = df[target].values
-
-            y_hat = obj.predict(X)
-            grad = numerical_gradient(obj.predict, X, 
+        y_hat = self.obj.predict(X)
+        
+        
+        # heterogeneity of effects 
+        if method == "avg":
+        
+            grad = numerical_gradient(self.obj.predict, X, 
                                       n_jobs=self.n_jobs)
-
+    
             res_df = pd.DataFrame(
-                data=grad, columns=col_names
+                data=grad, columns=X_names
             )
-
+    
             res_df_mean = res_df.mean()
             res_df_std = res_df.std()
             res_df_min = res_df.min()
@@ -73,29 +79,98 @@ class Explainer(BaseEstimator):
                 ],
                 axis=1,
             )
-
+    
             df_effects = pd.DataFrame(
                 data=data.values,
                 columns=["mean", "std", "min", "max"],
-                index=col_names,
+                index=X_names,
             )
-
-            # heterogeneity of effects
-            self.y_mean = np.mean(y)
-            ss_tot = np.sum((y - self.y_mean) ** 2)
-            ss_reg = np.sum((y_hat - self.y_mean) ** 2)
-            ss_res = np.sum((y - y_hat) ** 2)
-
+            
             # heterogeneity of effects
             self.effects_ = df_effects.sort_values(
-                by=["mean"]
+            by=["mean"])
+        
+        
+        # confidence intervals
+        if method == "ci":
+            
+            self.ci_ = numerical_gradient_jackknife(self.obj.predict, X, 
+                                                   n_jobs=self.n_jobs,
+                                                   level=level)                          
+                    
+        
+        # any case:
+        self.y_mean_ = np.mean(y)
+        ss_tot = np.sum((y - self.y_mean_) ** 2)
+        ss_reg = np.sum((y_hat - self.y_mean_) ** 2)
+        ss_res = np.sum((y - y_hat) ** 2)
+        
+        self.residuals_ = y - y_hat
+        self.r_squared_ = 1 - ss_res / ss_tot
+        self.adj_r_squared_ = 1 - (1 - self.r_squared_)*(n-1)/(n-p-1)
+
+        return self
+
+
+    # summary for the object -----
+    def summary(self):                
+        
+        assert (self.ci_ is not None) | (self.effects_ is not None), \
+        "object not fitted"
+        
+        if self.ci_ is not None:
+            
+            #(mean_est, se_est, 
+            #mean_est + qt*se_est, mean_est - qt*se_est, 
+            #p_values, signif_codes)
+            
+            df_mean = pd.Series(data=self.ci_[0], index=self.X_names)
+            df_se = pd.Series(data=self.ci_[1], index=self.X_names)
+            df_ubound = pd.Series(data=self.ci_[2], index=self.X_names)
+            df_lbound = pd.Series(data=self.ci_[3], index=self.X_names)
+            df_pvalue = pd.Series(data=self.ci_[4], index=self.X_names)
+            df_signif = pd.Series(data=self.ci_[5], index=self.X_names)
+            
+            data = pd.concat(
+                [
+                    df_mean,
+                    df_se,
+                    df_lbound,
+                    df_ubound,                    
+                    df_pvalue,
+                    df_signif                    
+                ],
+                axis=1,
             )
-            self.residuals_ = y - y_hat
-            self.r_squared_ = 1 - ss_res / ss_tot
-            self.adj_r_squared_ = 1 - (1 - self.r_squared_)*(n-1)/(n-p-1)
+    
+            self.ci_summary_ = pd.DataFrame(
+                data=data.values,
+                columns=["Estimate", "Std. Error", str(self.level)+"% lbound", 
+                         str(self.level)+"% ubound", "Pr(>|t|)", ""],
+                index=self.X_names
+            ).sort_values(
+            by=["Estimate"])
+            
+            print("\n")
+            print("Residuals: ")
+            self.residuals_dist_ = pd.DataFrame(pd.Series(data=np.quantile(self.residuals_, q=[0, 0.25, 0.5, 0.75, 1]), 
+                      index=["Min", "1Q", "Median", "3Q", "Max"])).transpose()
 
-            return self
+            print(self.residuals_dist_.to_string(index=False))
+            
+            print("\n")
+            print("Tests on marginal effects (Jackknife): ")
+            print(self.ci_summary_)
+            print("\n")
+            print("Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1")
+            
+            print("\n")
+            print(f"Multiple R-squared:  {np.round(self.r_squared_, 3)},	Adjusted R-squared:  {np.round(self.adj_r_squared_, 3)}")
+        
+        if self.effects_ is not None: 
+            print("\n")
+            print("Heterogeneity of marginal effects: ")
+            print(self.effects_)
 
-        raise ValueError(
-            "Dataset 'df' must be a data frame"
-        )
+    
+    
