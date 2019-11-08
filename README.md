@@ -22,11 +22,13 @@ pip install git+https://github.com/thierrymoudiki/teller.git
 
 ## Package description
 
-This notebook will be a good introduction:
+These notebooks will be some good introductions:
 
-[thierrymoudiki_011119_boston_housing.ipynb](/teller/demo/thierrymoudiki_011119_boston_housing.ipynb)
+- [thierrymoudiki_011119_boston_housing.ipynb](/teller/demo/thierrymoudiki_011119_boston_housing.ipynb)
+- [thierrymoudiki_081119_boston_housing.ipynb](/teller/demo/thierrymoudiki_081119_boston_housing.ipynb)
 
-Two models are used in the notebook: a __linear model__ and a [Random Forest](https://en.wikipedia.org/wiki/Random_forest) (here, the _black-box_ model). The most straightforward way to illustrate the `teller` is to use a linear model. In this case, the effects of model covariates on the response can be directly related to the linear model's coefficients.
+Two models are used in the 1st notebook: a __linear model__ and a [Random Forest](https://en.wikipedia.org/wiki/Random_forest) (here, the _black-box_ model). The most straightforward way to illustrate the `teller` is to use a linear model. In this case, the effects of model covariates on the response can be directly related to the linear model's coefficients.
+The second one contains tests on the signifcance of marginal effects. 
 
 
 ## Contributing
