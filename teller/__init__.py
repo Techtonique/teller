@@ -1,4 +1,5 @@
+from .explainer import Comparator
 from .explainer import Explainer
 
 
-__all__ = ["Explainer"]
+__all__ = ["Comparator", "Explainer"]

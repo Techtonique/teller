@@ -26,7 +26,7 @@ def get_code_pval(pval):
         return "."
 
     if pval >= 0.1:
-        return " "
+        return "-"
 
 
 @memoize

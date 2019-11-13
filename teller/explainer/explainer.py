@@ -7,24 +7,24 @@ from ..utils import (
     memoize,
     numerical_gradient,
     numerical_gradient_jackknife,
+    score_regression, 
+    score_classification
 )
 
 
 class Explainer(BaseEstimator):
-    """class_ Explainer.
+    """class Explainer.
         
        Parameters
        ----------
        obj: object
            fitted object containing a method 'predict'
-       df: data frame
-           a data frame containing test set data + the target variable
-       target: str
-           name of the target variable (response, variable to be explained)
+       n_jobs: int
+           number of jobs for parallel computing
     """
 
-    # construct the object -----
 
+    # construct the object -----
     def __init__(self, obj, n_jobs=None):
 
         self.obj = obj
@@ -37,10 +37,12 @@ class Explainer(BaseEstimator):
         self.effects_ = None
         self.ci_ = None
 
-    # fit the object -----
 
+    # fit the object -----    
     def fit(
-        self, X, y, X_names, y_name, method="avg", level=95
+        self, X, y, X_names, y_name, 
+        method="avg", scoring=None, 
+        level=95
     ):
 
         assert method in (
@@ -53,6 +55,19 @@ class Explainer(BaseEstimator):
         self.X_names = X_names
         self.y_name = y_name
         self.level = level
+        self.scoring = scoring
+        
+        if is_factor(y):
+            self.score_ = score_classification(self.obj, X, y, 
+                                              scoring=scoring)
+            if scoring is None:
+                self.scoring = "accuracy"
+        else:
+            self.score_ = score_regression(self.obj, X, y, 
+                                          scoring=scoring)
+            if scoring is None:
+                self.scoring = "rmse"
+                    
 
         y_hat = self.obj.predict(X)
 
@@ -116,12 +131,13 @@ class Explainer(BaseEstimator):
 
         return self
 
+
     # summary for the object -----
     def summary(self):
 
         assert (self.ci_ is not None) | (
             self.effects_ is not None
-        ), "object not fitted"
+        ), "object not fitted, fit the object first"
 
         if self.ci_ is not None:
 
@@ -173,6 +189,11 @@ class Explainer(BaseEstimator):
                 index=self.X_names,
             ).sort_values(by=["Estimate"])
 
+            
+            print("\n")
+            print(f"Score ({self.scoring}): \n {np.round(self.score_, 3)}")            
+            
+            
             print("\n")
             print("Residuals: ")
             self.residuals_dist_ = pd.DataFrame(
@@ -200,7 +221,7 @@ class Explainer(BaseEstimator):
             print(self.ci_summary_)
             print("\n")
             print(
-                "Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1"
+                "Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘-’ 1"
             )
 
             print("\n")
