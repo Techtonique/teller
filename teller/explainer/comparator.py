@@ -45,14 +45,6 @@ class Comparator(BaseEstimator):
         "scoring metrics must match for both objects"                
         
         
-        # Gaussianity tests
-        
-        test_shapiro_obj1 = stats.shapiro(self.obj1.residuals_)
-        test_shapiro_obj2 = stats.shapiro(self.obj2.residuals_)  
-        
-        test_jarque_bera_obj1 = stats.jarque_bera(self.obj1.residuals_)
-        test_jarque_bera_obj2 = stats.jarque_bera(self.obj2.residuals_)                        
-        
         print("\n")
         print(f"Scores ({self.obj1.scoring}): ")
         print(f"Object1: {np.round(self.obj1.score_, 3)}")
@@ -96,14 +88,6 @@ class Comparator(BaseEstimator):
             df1_summary = self.obj1.ci_summary_[['Estimate', 'Std. Error', '']].sort_index(axis=0)
             df2_summary = self.obj2.ci_summary_[['Estimate', 'Std. Error', '']].sort_index(axis=0)
             
-#            print("\n")                        
-#            print(self.obj1.ci_summary_[['Estimate', '']])            
-#            print(self.obj2.ci_summary_[['Estimate', '']])    
-#            
-#            print("\n")                        
-#            print(df1_summary)            
-#            print(df2_summary) 
-            
             df_summary = pd.DataFrame(data=pd.concat([df1_summary, df2_summary], 
                                                      axis=1).values, 
                                       columns=['Estimate1', 'Std. Error1', 'Signif.', 'Estimate2', 'Std. Error2', 'Signif.'], 
@@ -114,30 +98,6 @@ class Comparator(BaseEstimator):
             print(df_summary)                  
                         
         
-#        print("\n")
-#        print("Gaussianity tests on residuals (5%):")
-#        
-#        print("\n")
-#        print("Shapiro-Wilk:")
-#        print("Object 1: ")
-#        print(f"Statistic: {test_shapiro_obj1[0]}, p-value: {test_shapiro_obj1[1]} {get_code_pval(test_shapiro_obj1[1])}")
-#        print("Object 2: ")
-#        print(f"Statistic: {test_shapiro_obj2[0]}, p-value: {test_shapiro_obj2[1]} {get_code_pval(test_shapiro_obj2[1])}")
-#        
-#        print("\n")
-#        print("Jarque-Bera: ")
-#        print("Object 1: ")
-#        print(f"Statistic: {test_jarque_bera_obj1[0]}, p-value: {test_jarque_bera_obj1[1]} {get_code_pval(test_jarque_bera_obj1[1])}")
-#        print("Object 2: ")
-#        print(f"Statistic: {test_jarque_bera_obj2[0]}, p-value: {test_jarque_bera_obj2[1]} {get_code_pval(test_jarque_bera_obj2[1])}")
-#                
-#        
-#        # Variance ratio tests
-#        print("\n")
-#        print("Variance ratio test on residuals (5%):")
-#        print(var_test(self.obj1.residuals_, self.obj2.residuals_))
-#        
-#        
         print("\n")
         print(
             "Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘-’ 1"
