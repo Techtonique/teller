@@ -4,15 +4,19 @@ from .memoize import memoize
 from .progress_bar import Progbar
 from joblib import Parallel, delayed
 from tqdm import tqdm
+from numpy.linalg import norm
+from sklearn.preprocessing import MinMaxScaler
 
 
 @memoize
 def numerical_gradient(
-    f, X, h=None, n_jobs=None, verbose=1
+    f, X, normalize=False, 
+    h=None, n_jobs=None, verbose=1,
 ):
 
     n, p = X.shape
     grad = np.zeros_like(X)
+    zero = 1e-4
 
     if n_jobs is None:
 
@@ -47,12 +51,14 @@ def numerical_gradient(
             if verbose == 1:
                 pbar.update(p)
                 print("\n")
-
+            
+            if normalize == True:
+                scaler = MinMaxScaler(feature_range=(-1, 1))
+                return scaler.fit_transform(grad)
             return grad
 
         # if h is None: -----
 
-        zero = np.finfo(float).eps
         eps_factor = zero ** (1 / 3)
 
         if verbose == 1:
@@ -67,7 +73,7 @@ def numerical_gradient(
             cond = np.abs(value_x) > zero
             h = (
                 eps_factor * value_x * cond
-                + 1e-4 * np.logical_not(cond)
+                + zero * np.logical_not(cond)
             )
 
             X[:, ix] = value_x + h
@@ -85,11 +91,13 @@ def numerical_gradient(
         if verbose == 1:
             pbar.update(p)
             print("\n")
-
+        
+        if normalize == True:
+            scaler = MinMaxScaler(feature_range=(-1, 1))
+            return scaler.fit_transform(grad)
         return grad
 
     # if n_jobs is not None:
-    zero = np.finfo(float).eps
     eps_factor = zero ** (1 / 3)
 
     def gradient_column(ix):
@@ -99,7 +107,7 @@ def numerical_gradient(
         cond = np.abs(value_x) > zero
         h = (
             eps_factor * value_x * cond
-            + 1e-4 * np.logical_not(cond)
+            + zero * np.logical_not(cond)
         )
 
         X[:, ix] = value_x + h
@@ -119,11 +127,17 @@ def numerical_gradient(
             for m in tqdm(range(p))
         )
         print("\n")
-
+        
+        if normalize == True:
+            scaler = MinMaxScaler(feature_range=(-1, 1))
+            return scaler.fit_transform(grad)
         return grad
 
     Parallel(n_jobs=n_jobs, prefer="threads")(
         delayed(gradient_column)(m) for m in range(p)
     )
-
+    
+    if normalize == True:
+        scaler = MinMaxScaler(feature_range=(-1, 1))
+        return scaler.fit_transform(grad)
     return grad
