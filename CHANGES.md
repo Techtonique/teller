@@ -1,3 +1,7 @@
+# version 0.5.0
+
+- Add functionality for explaining interactions
+
 # version 0.4.0
 
 - Add functionality for explaining classifiers decisions

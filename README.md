@@ -27,6 +27,8 @@ These notebooks will be some good introductions:
 - [Heterogeneity of marginal effects](/teller/demo/thierrymoudiki_011119_boston_housing.ipynb)
 - [Significance of marginal effects](/teller/demo/thierrymoudiki_081119_boston_housing.ipynb)
 - [Model comparison](/teller/demo/thierrymoudiki_151119_boston_housing.ipynb)
+- [Classification](/teller/demo/thierrymoudiki_041219_breast_cancer_classif.ipynb)
+- [Interactions](/teller/demo/thierrymoudiki_041219_boston_housing_interactions.ipynb)
 
 
 ## Contributing
