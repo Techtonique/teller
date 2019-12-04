@@ -2,17 +2,15 @@ import numpy as np
 import pandas as pd
 from sklearn.base import BaseEstimator
 from ..utils import (
-    deepcopy,
     is_factor,
-    memoize,
     numerical_gradient,
     numerical_gradient_jackknife,
     numerical_interactions,
     numerical_interactions_jackknife,
+    Progbar,
     score_regression, 
     score_classification
 )
-from scipy.special import expit
 
 
 class Explainer(BaseEstimator):
@@ -27,7 +25,7 @@ class Explainer(BaseEstimator):
        y_class: int
            class whose probability has to be explained (for classification only)
        normalize:  boolean
-           whether the effects must be normalized or not
+           whether the effects must be normalized or not       
     """
 
 
@@ -45,6 +43,7 @@ class Explainer(BaseEstimator):
         self.adj_r_squared_ = None
         self.effects_ = None
         self.ci_ = None
+        self.ci_inters_ = {}
         self.type_fit = None
         self.y_class = y_class # classification only
         self.normalize = normalize
@@ -57,13 +56,15 @@ class Explainer(BaseEstimator):
         X_names, y_name, 
         method="avg", 
         scoring=None,
-        level=95
+        level=95, 
+        col_inters=None
     ):
 
         assert method in (
             "avg",
             "ci",
-        ), "must have: `method` in ('avg', 'ci')"                        
+            'inters',
+        ), "must have: `method` in ('avg', 'ci', 'inters')"
 
         n, p = X.shape
 
@@ -71,6 +72,7 @@ class Explainer(BaseEstimator):
         self.y_name = y_name
         self.level = level
         self.scoring = scoring
+        self.method = method
         
         
         if is_factor(y): # classification ---
@@ -110,6 +112,29 @@ class Explainer(BaseEstimator):
                 X, normalize=self.normalize, 
                 n_jobs=self.n_jobs, level=level)
                 
+            
+            # interactions
+            if method == "inters":
+            
+                assert (col_inters is not None),\
+                "`col_inters` must be provided"
+                
+                self.col_inters = col_inters
+                
+                ix1 = np.where(X_names == col_inters)[0][0]
+            
+                pbar = Progbar(p)
+            
+                for ix2 in range(p): 
+                
+                    self.ci_inters_.update({X_names[ix2]: numerical_interactions_jackknife(f=predict_proba,\
+                                                                             X=X, ix1=ix1, ix2=ix2, verbose=0)})
+                                
+                    pbar.update(ix2)
+
+                pbar.update(p)
+                print("\n")
+                
                 
         else: # is_factor(y) == False # regression ---
             
@@ -141,6 +166,28 @@ class Explainer(BaseEstimator):
                 level=level,
                 )
             
+            # interactions
+            if method == "inters":
+            
+                assert (col_inters is not None),\
+                "`col_inters` must be provided"
+                
+                self.col_inters = col_inters
+                
+                ix1 = np.where(X_names == col_inters)[0][0]
+            
+                pbar = Progbar(p)
+            
+                for ix2 in range(p): 
+                
+                    self.ci_inters_.update({X_names[ix2]: numerical_interactions_jackknife(f=self.obj.predict,\
+                                                                             X=X, ix1=ix1, ix2=ix2, verbose=0)})
+                                
+                    pbar.update(ix2)
+
+                pbar.update(p)
+                print("\n")
+            
             self.y_mean_ = np.mean(y)
             ss_tot = np.sum((y - self.y_mean_) ** 2)
             ss_reg = np.sum((y_hat - self.y_mean_) ** 2)
@@ -154,34 +201,37 @@ class Explainer(BaseEstimator):
         
         
         # classification and regression ---
-        res_df = pd.DataFrame(
-            data=self.grad, columns=X_names
-        )                
-                    
-        res_df_mean = res_df.mean()
-        res_df_std = res_df.std()
-        res_df_min = res_df.min()
-        res_df_max = res_df.max()
-        data = pd.concat(
-            [
-                res_df_mean,
-                res_df_std,
-                res_df_min,
-                res_df_max,
-            ],
-            axis=1,
-        )            
-
-        df_effects = pd.DataFrame(
-            data=data.values,
-            columns=["mean", "std", "min", "max"],
-            index=X_names,
-        )
-
-        # heterogeneity of effects
-        self.effects_ = df_effects.sort_values(
-            by=["mean"], ascending=False
-        )                        
+        
+        if method == "avg": 
+        
+            res_df = pd.DataFrame(
+                data=self.grad, columns=X_names
+            )                
+                        
+            res_df_mean = res_df.mean()
+            res_df_std = res_df.std()
+            res_df_min = res_df.min()
+            res_df_max = res_df.max()
+            data = pd.concat(
+                [
+                    res_df_mean,
+                    res_df_std,
+                    res_df_min,
+                    res_df_max,
+                ],
+                axis=1,
+            )            
+    
+            df_effects = pd.DataFrame(
+                data=data.values,
+                columns=["mean", "std", "min", "max"],
+                index=X_names,
+            )
+    
+            # heterogeneity of effects
+            self.effects_ = df_effects.sort_values(
+                by=["mean"], ascending=False
+            )                        
 
         return self
 
@@ -192,10 +242,10 @@ class Explainer(BaseEstimator):
 
         assert (self.ci_ is not None) | (
             self.effects_ is not None
-        ), "object not fitted, fit the object first"
+        ) | (self.ci_inters_ is not None), "object not fitted, fit the object first"
                 
 
-        if self.ci_ is not None:
+        if (self.ci_ is not None) & (self.method == "ci"):
 
             # (mean_est, se_est,
             # mean_est + qt*se_est, mean_est - qt*se_est,
@@ -290,9 +340,23 @@ class Explainer(BaseEstimator):
                     f"Multiple R-squared:  {np.round(self.r_squared_, 3)},	Adjusted R-squared:  {np.round(self.adj_r_squared_, 3)}"
                 )
 
-        if self.effects_ is not None:
+
+        if (self.effects_ is not None) & (self.method == "avg"):
             print("\n")
             print("Heterogeneity of marginal effects: ")
             with pd.option_context('display.max_rows', None, 'display.max_columns', None):
                 print(self.effects_)
             print("\n")
+        
+        
+        if (self.ci_inters_ is not None) & (self.method == "inters"):
+            print("\n")
+            print("Interactions with " + self.col_inters + ": ")
+            with pd.option_context('display.max_rows', None, 'display.max_columns', None):
+                print(pd.DataFrame(self.ci_inters_, 
+                       index=["Estimate",
+                        "Std. Error",
+                        str(95) + "% lbound",
+                        str(95) + "% ubound",
+                        "Pr(>|t|)",
+                        ""]).transpose())

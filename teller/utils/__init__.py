@@ -11,7 +11,7 @@ from .numerical_gradient import numerical_gradient, numerical_interactions
 from .numerical_gradient_jackknife import (
     numerical_gradient_jackknife, get_code_pval
 )
-from numerical_interactions_jackknife import numerical_interactions_jackknife
+from .numerical_interactions_jackknife import numerical_interactions_jackknife
 from .progress_bar import Progbar
 from .scoring import score_regression, score_classification
 from .t_test import t_test

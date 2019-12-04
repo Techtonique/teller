@@ -33,19 +33,16 @@ expr1 = tr.Explainer(obj=clf1, y_class=1, normalize=False)
 
 
 # fitting the explainer (for heterogeneity of effects only)
-expr1.fit(X_test, y_test, X_names=X_names, y_name=y_name, 
-          method="avg") # put y_class and normalize in object creation
-
-
-# confidence intervals and tests on marginal effects (Jackknife)
-expr1.fit(X_test, y_test, X_names=X_names, y_name=y_name, 
-          method="ci") # put y_class and normalize in object creation
-
+expr1.fit(X_test, y_test, X_names=breast_cancer.feature_names, 
+          y_name="diagnosis", method="avg") 
 
 # summary of results for the model
 print(expr1.summary())
 
 
-# see: https://scikit-learn.org/stable/auto_examples/ensemble/plot_forest_importances.html
-print(clf1.feature_importances_)
+# confidence intervals and tests on marginal effects (Jackknife)
+expr1.fit(X_test, y_test, X_names=breast_cancer.feature_names, 
+          y_name="diagnosis", method="ci") 
 
+# summary of results for the model
+print(expr1.summary())

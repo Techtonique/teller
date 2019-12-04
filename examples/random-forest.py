@@ -41,36 +41,29 @@ expr = tr.Explainer(obj=regr)
 # print(expr.get_params())
 
 
+# heterogeneity of effects -----
 # fitting the explainer
-expr.fit(X_test, y_test, X_names=col_names[:-1], y_name=col_names[-1], method="avg")
-
-
-# heterogeneity of effects
+expr.fit(X_test, y_test, X_names=col_names[:-1], 
+         y_name=col_names[-1], method="avg")
 print(expr.summary())
 
 
-# confidence int. and tests on effects
-expr.fit(X_test, y_test, X_names=col_names[:-1], y_name=col_names[-1], method="ci")
-
+# confidence int. and tests on effects -----
+expr.fit(X_test, y_test, X_names=col_names[:-1], 
+         y_name=col_names[-1], method="ci")
 print(expr.summary())
 
 
-# interactions
+# interactions -----
 varx = "RAD"
-expr.fit(X_test, y_test, X_names=col_names[:-1], y_name=col_names[-1], 
+expr.fit(X_test, y_test, X_names=col_names[:-1], 
+         y_name=col_names[-1], 
          col_inters = varx, method="inters")
+print(expr.summary())
 
 
-expr.ci_inters_
-
-
-print("\n")
-print("interactions with " + varx + ": ")
-print("\n")
-print(pd.DataFrame(expr.ci_inters_, 
-                   index=["Estimate",
-                    "Std. Error",
-                    str(95) + "% lbound",
-                    str(95) + "% ubound",
-                    "Pr(>|t|)",
-                    ""]).transpose())
+varx = "RM"
+expr.fit(X_test, y_test, X_names=col_names[:-1], 
+         y_name=col_names[-1], 
+         col_inters = varx, method="inters")
+print(expr.summary())
