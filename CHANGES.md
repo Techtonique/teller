@@ -1,3 +1,7 @@
+# version 0.4.0
+
+- Add functionality for explaining classifiers decisions
+
 # version 0.3.0
 
 - Add functionality for comparing (and explain) models
