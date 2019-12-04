@@ -7,10 +7,11 @@ from .misc import (
     is_factor,
     tuple_insert,
 )
-from .numerical_gradient import numerical_gradient
+from .numerical_gradient import numerical_gradient, numerical_interactions
 from .numerical_gradient_jackknife import (
     numerical_gradient_jackknife, get_code_pval
 )
+from numerical_interactions_jackknife import numerical_interactions_jackknife
 from .progress_bar import Progbar
 from .scoring import score_regression, score_classification
 from .t_test import t_test
@@ -26,7 +27,9 @@ __all__ = [
     "is_factor",
     "tuple_insert",
     "numerical_gradient",
+    "numerical_interactions",
     "numerical_gradient_jackknife",
+    "numerical_interactions_jackknife",
     "get_code_pval",
     "Progbar",
     "score_regression", 

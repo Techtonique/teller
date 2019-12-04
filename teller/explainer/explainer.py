@@ -7,6 +7,8 @@ from ..utils import (
     memoize,
     numerical_gradient,
     numerical_gradient_jackknife,
+    numerical_interactions,
+    numerical_interactions_jackknife,
     score_regression, 
     score_classification
 )
