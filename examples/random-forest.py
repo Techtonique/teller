@@ -53,3 +53,24 @@ print(expr.summary())
 expr.fit(X_test, y_test, X_names=col_names[:-1], y_name=col_names[-1], method="ci")
 
 print(expr.summary())
+
+
+# interactions
+varx = "RAD"
+expr.fit(X_test, y_test, X_names=col_names[:-1], y_name=col_names[-1], 
+         col_inters = varx, method="inters")
+
+
+expr.ci_inters_
+
+
+print("\n")
+print("interactions with " + varx + ": ")
+print("\n")
+print(pd.DataFrame(expr.ci_inters_, 
+                   index=["Estimate",
+                    "Std. Error",
+                    str(95) + "% lbound",
+                    str(95) + "% ubound",
+                    "Pr(>|t|)",
+                    ""]).transpose())

@@ -54,7 +54,8 @@ def numerical_gradient(
             
             if normalize == True:
                 scaler = MinMaxScaler(feature_range=(-1, 1))
-                return scaler.fit_transform(grad)
+                scaled_grad = scaler.fit_transform(grad)
+                return scaled_grad/scaled_grad.sum(axis=1)[:, None]
             return grad
 
         # if h is None: -----
@@ -94,7 +95,8 @@ def numerical_gradient(
         
         if normalize == True:
             scaler = MinMaxScaler(feature_range=(-1, 1))
-            return scaler.fit_transform(grad)
+            scaled_grad = scaler.fit_transform(grad)
+            return scaled_grad/scaled_grad.sum(axis=1)[:, None]
         return grad
 
     # if n_jobs is not None:
@@ -130,7 +132,8 @@ def numerical_gradient(
         
         if normalize == True:
             scaler = MinMaxScaler(feature_range=(-1, 1))
-            return scaler.fit_transform(grad)
+            scaled_grad = scaler.fit_transform(grad)
+            return scaled_grad/scaled_grad.sum(axis=1)[:, None]
         return grad
 
     Parallel(n_jobs=n_jobs, prefer="threads")(
@@ -139,5 +142,6 @@ def numerical_gradient(
     
     if normalize == True:
         scaler = MinMaxScaler(feature_range=(-1, 1))
-        return scaler.fit_transform(grad)
+        scaled_grad = scaler.fit_transform(grad)
+        return scaled_grad/scaled_grad.sum(axis=1)[:, None]
     return grad

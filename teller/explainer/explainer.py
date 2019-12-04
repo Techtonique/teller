@@ -274,7 +274,8 @@ class Explainer(BaseEstimator):
 
             print("\n")
             print("Tests on marginal effects (Jackknife): ")
-            print(self.ci_summary_)
+            with pd.option_context('display.max_rows', None, 'display.max_columns', None):
+                print(self.ci_summary_)
             print("\n")
             print(
                 "Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘-’ 1"
@@ -290,4 +291,6 @@ class Explainer(BaseEstimator):
         if self.effects_ is not None:
             print("\n")
             print("Heterogeneity of marginal effects: ")
-            print(self.effects_)
+            with pd.option_context('display.max_rows', None, 'display.max_columns', None):
+                print(self.effects_)
+            print("\n")

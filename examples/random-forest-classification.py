@@ -5,25 +5,24 @@ import numpy as np
 from sklearn import datasets
 from sklearn.ensemble import RandomForestClassifier, ExtraTreesClassifier
 from sklearn.model_selection import train_test_split
+from sklearn.datasets import load_breast_cancer, load_wine, load_iris, make_classification
 
 
-Default = pd.read_csv("/Users/moudiki/Documents/github_io_sandbox/Blog material/2019-11-29/Default.csv", 
-                      sep=',')
-X = Default.iloc[:,1:4].values
-y = Default['defaultYes'].values
-col_names = Default.columns.values
-X_names = col_names[[1, 2, 3]]
-y_name = col_names[0]
 
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, 
-                                                    random_state=80073)
+breast_cancer = load_breast_cancer()
+Z = breast_cancer.data
+t = breast_cancer.target
+np.random.seed(123)
+X_train, X_test, y_train, y_test = train_test_split(Z, t, test_size=0.2)
+
+
 print(X_train.shape)
 print(X_test.shape)
 
 
-clf1 = RandomForestClassifier(n_estimators=500, 
-                            max_features=int(math.sqrt(X_train.shape[1])),
-                            random_state=2989)
+clf1 = ExtraTreesClassifier(n_estimators=250, 
+                              max_features=int(math.sqrt(X_train.shape[1])),
+                              random_state=24869)
 
 
 clf1.fit(X_train, y_train)
