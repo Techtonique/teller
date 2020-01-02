@@ -1,4 +1,4 @@
-from .comparator import Comparator 
+from .comparator import Comparator
 from .explainer import Explainer
 
 

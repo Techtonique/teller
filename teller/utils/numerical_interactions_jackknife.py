@@ -9,9 +9,7 @@ from scipy.stats import t
 
 def get_code_pval(pval):
 
-    assert (pval >= 0) & (
-        pval <= 1
-    ), "must have pval >= 0 & pval <= 1"
+    assert (pval >= 0) & (pval <= 1), "must have pval >= 0 & pval <= 1"
 
     if (pval >= 0) & (pval < 0.001):
         return "***"
@@ -31,15 +29,14 @@ def get_code_pval(pval):
 
 @memoize
 def numerical_interactions_jackknife(
-    f, X, ix1, ix2, level=95, 
-    h=None, n_jobs=None, verbose=1,
+    f, X, ix1, ix2, level=95, h=None, n_jobs=None, verbose=1
 ):
 
     n, p = X.shape
     mean_grads = []
 
     if n_jobs is None:
-        
+
         if verbose == 1:
             print("\n")
             print("Calculating the effects...")
@@ -49,14 +46,13 @@ def numerical_interactions_jackknife(
 
             X_i = np.delete(X, i, 0)
 
-            inters_i = numerical_interactions(f, X_i, 
-                                              ix1, ix2)
+            inters_i = numerical_interactions(f, X_i, ix1, ix2)
 
             mean_grads.append(np.mean(inters_i))
-            
+
             if verbose == 1:
                 pbar.update(i)
-        
+
         if verbose == 1:
             pbar.update(n)
             print("\n")
@@ -79,7 +75,6 @@ def numerical_interactions_jackknife(
 
         # cat("Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1", "\n")
         signif_code = get_code_pval(p_value)
-        
 
         return (
             mean_est,
@@ -87,14 +82,13 @@ def numerical_interactions_jackknife(
             mean_est + qt * se_est,
             mean_est - qt * se_est,
             p_value,
-            signif_code
+            signif_code,
         )
 
     # if n_jobs is not None:
     def interactions_column(i):
         X_i = np.delete(X, i, 0)
-        inters_i = numerical_interactions(f, X_i, 
-                                          ix1, ix2)
+        inters_i = numerical_interactions(f, X_i, ix1, ix2)
         mean_grads.append(np.mean(inters_i))
 
     print("\n")

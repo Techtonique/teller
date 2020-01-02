@@ -10,9 +10,7 @@ from scipy.special import expit
 
 def get_code_pval(pval):
 
-    assert (pval >= 0) & (
-        pval <= 1
-    ), "must have pval >= 0 & pval <= 1"
+    assert (pval >= 0) & (pval <= 1), "must have pval >= 0 & pval <= 1"
 
     if (pval >= 0) & (pval < 0.001):
         return "***"
@@ -32,8 +30,7 @@ def get_code_pval(pval):
 
 @memoize
 def numerical_gradient_jackknife(
-    f, X, normalize=False, 
-    level=95, h=None, n_jobs=None
+    f, X, normalize=False, level=95, h=None, n_jobs=None
 ):
 
     n, p = X.shape
@@ -49,8 +46,7 @@ def numerical_gradient_jackknife(
 
             X_i = np.delete(X, i, 0)
 
-            grad_i = numerical_gradient(f, X_i, normalize,
-                                        verbose=0)
+            grad_i = numerical_gradient(f, X_i, normalize, verbose=0)
 
             mean_grads.append(np.mean(grad_i, axis=0))
 
@@ -59,16 +55,16 @@ def numerical_gradient_jackknife(
         pbar.update(n)
         print("\n")
 
-        mean_grads = np.asarray(mean_grads)                        
-                
+        mean_grads = np.asarray(mean_grads)
+
         mean_est = np.mean(mean_grads, axis=0)
-        
+
         se_est = np.clip(
             ((n - 1) * np.var(mean_grads, axis=0)) ** 0.5,
             a_min=np.finfo(float).eps,
             a_max=None,
         )
-            
+
         t_est = mean_est / se_est
 
         qt = t.ppf(1 - (1 - level / 100) * 0.5, n - 1)
@@ -76,9 +72,7 @@ def numerical_gradient_jackknife(
         p_values = 2 * t.sf(x=np.abs(t_est), df=n - 1)
 
         # cat("Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1", "\n")
-        signif_codes = [
-            get_code_pval(elt) for elt in p_values
-        ]
+        signif_codes = [get_code_pval(elt) for elt in p_values]
 
         return (
             mean_est,

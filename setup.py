@@ -18,8 +18,8 @@ install_requires = [x.strip() for x in all_reqs if 'git+' not in x]
 setup(
     name='teller',
     version=__version__,
-    description='teller',
-    long_description="A model-agnostic tool for Machine Learning Explainability",
+    description='teller, explainable machine learning',
+    long_description=long_description,
     url='https://github.com/thierrymoudiki/teller',
     download_url='https://github.com/thierrymoudiki/teller/tarball/' + __version__,
     license='BSD',

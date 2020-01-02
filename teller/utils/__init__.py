@@ -1,15 +1,10 @@
 from .deepcopy import deepcopy
 from .memoize import memoize
-from .misc import (
-    diff_list,
-    merge_two_dicts,
-    flatten,
-    is_factor,
-    tuple_insert,
-)
+from .misc import diff_list, merge_two_dicts, flatten, is_factor, tuple_insert
 from .numerical_gradient import numerical_gradient, numerical_interactions
 from .numerical_gradient_jackknife import (
-    numerical_gradient_jackknife, get_code_pval
+    numerical_gradient_jackknife,
+    get_code_pval,
 )
 from .numerical_interactions_jackknife import numerical_interactions_jackknife
 from .progress_bar import Progbar
@@ -32,8 +27,8 @@ __all__ = [
     "numerical_interactions_jackknife",
     "get_code_pval",
     "Progbar",
-    "score_regression", 
+    "score_regression",
     "score_classification",
     "t_test",
-    "var_test"
+    "var_test",
 ]

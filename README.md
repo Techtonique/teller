@@ -37,7 +37,7 @@ Your contributions are welcome, and valuable. Please, make sure to __read__ the 
 
 ```bash
 pip install black
-black --line-length=60 file_submitted_for_pr.py
+black --line-length=80 file_submitted_for_pr.py
 ```
 
 ## Dependencies 

@@ -3,11 +3,7 @@ from .memoize import memoize
 
 # get complement of a list in a list
 def diff_list(first_list, second_list):
-    return [
-        item
-        for item in first_list
-        if item not in second_list
-    ]
+    return [item for item in first_list if item not in second_list]
 
 
 # find index of duplicates in a list
@@ -15,9 +11,7 @@ def list_duplicates(seq):
     seen = set()
     seen_add = seen.add
     return [
-        idx
-        for idx, item in enumerate(seq)
-        if item in seen or seen_add(item)
+        idx for idx, item in enumerate(seq) if item in seen or seen_add(item)
     ]
 
 
@@ -68,6 +62,4 @@ def is_factor(y):
 
 
 # flatten list of lists
-flatten = lambda l: [
-    item for sublist in l for item in sublist
-]
+flatten = lambda l: [item for sublist in l for item in sublist]
