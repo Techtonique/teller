@@ -33,7 +33,11 @@ These notebooks will be some good introductions:
 
 ## Contributing
 
-Your contributions are welcome, and valuable. Please, make sure to __read__ the [Code of Conduct](CONTRIBUTING.md) first. In Pull Requests, let's strive to use [`black`](https://black.readthedocs.io/en/stable/) for formatting: 
+Your contributions are welcome, and valuable. Please, make sure to __read__ the [Code of Conduct](CONTRIBUTING.md) first. 
+
+If you're not comfortable with Git/Version Control yet, please use [this form](https://forms.gle/Y18xaEHL78Fvci7r8).
+
+In Pull Requests, let's strive to use [`black`](https://black.readthedocs.io/en/stable/) for formatting: 
 
 ```bash
 pip install black
