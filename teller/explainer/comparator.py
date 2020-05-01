@@ -23,9 +23,9 @@ class Comparator(BaseEstimator):
        Parameters
        ----------
        obj1: object
-           fitted object containing a method 'predict'
+           fitted object containing methods `fit` and `predict`
        obj2: object
-           fitted object containing a method 'predict'
+           fitted object containing methods `fit` and `predict`
     """
 
     # construct the object -----
@@ -36,7 +36,13 @@ class Comparator(BaseEstimator):
 
     # summary of the object -----
     def summary(self):
-
+        """Summary of effects.                           
+               
+        Returns
+        -------
+        Prints the summary of effects.                         
+        """        
+        
         assert (self.obj1.residuals_ is not None) & (
             self.obj2.residuals_ is not None
         ), "provided objects must be fitted first"

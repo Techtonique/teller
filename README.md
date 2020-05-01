@@ -12,13 +12,21 @@ We do not want to sacrifice this high accuracy to explainability.  Hence: __ML e
 
 The `teller` is a __model-agnostic tool for ML explainability__ - agnostic, as long as  this model possesses methods `fit` and `predict`. The `teller`'s philosophy is to rely on [Taylor series](https://en.wikipedia.org/wiki/Taylor_series) to explain ML models predictions: a little increase in model's explanatory variables + a little decrease, and we can obtain approximate sensitivities of its predictions to changes in these explanatory variables. 
 
+
 ## Installation 
 
-- Currently from Github, for the development version: 
+- From Pypi, stable version:
+
+```bash
+pip install the-teller
+```
+
+- From Github, for the development version: 
 
 ```bash
 pip install git+https://github.com/thierrymoudiki/teller.git
 ```
+
 
 ## Package description
 
@@ -44,6 +52,7 @@ pip install black
 black --line-length=80 file_submitted_for_pr.py
 ```
 
+
 ## Dependencies 
 
 - Numpy
@@ -52,11 +61,25 @@ black --line-length=80 file_submitted_for_pr.py
 - scikit-learn
 
 
+## Citation
+
+```
+@misc{moudiki2019teller,
+	author={Moudiki, T.},
+	title={\code{teller}, {M}odel-agnostic {M}achine {L}earning explainability},
+	howpublished={\url{https://github.com/thierrymoudiki/teller}},
+	note={BSD 3-Clause Clear License. Version 0.x.x.},
+	year={2019--2020}
+	}
+```
+
+
 ## References
 
 - Press, W. H., Teukolsky, S. A., Vetterling, W. T., & Flannery, B. P. (1992). Numerical recipes in C (Vol. 2). Cambridge: Cambridge university press.
 - Jones E, Oliphant E, Peterson P, et al. SciPy: Open Source Scientific Tools for Python, 2001-, http://www.scipy.org/ [Online; accessed 2019-01-04]
 - Scikit-learn: Machine Learning in Python, Pedregosa et al., JMLR 12, pp. 2825-2830, 2011.
+
 
 ## License
 

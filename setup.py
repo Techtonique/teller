@@ -16,11 +16,12 @@ with open(path.join(here, 'requirements.txt'), encoding='utf-8') as f:
 install_requires = [x.strip() for x in all_reqs if 'git+' not in x]
 
 setup(
-    name='teller',
+    name='the-teller',
     version=__version__,
     description='teller, explainable machine learning',
-    long_description=long_description,
+    long_description='Model-agnostic Machine Learning explainability',
     url='https://github.com/thierrymoudiki/teller',
+    alias='the-teller',
     download_url='https://github.com/thierrymoudiki/teller/tarball/' + __version__,
     license='BSD',
     classifiers=[
