@@ -19,7 +19,7 @@ The teller's documentation
 
 
 
-`teller`'s **source code** is `available on GitHub <https://github.com/thierrymoudiki/teller>`_. You can read blog posts about `teller` `here <https://thierrymoudiki.github.io/blog/#ExplainableML>`_, and for current references, consult section :ref:`ref-references`. 
+The `teller`'s **source code** is `available on GitHub <https://github.com/thierrymoudiki/teller>`_. You can read blog posts about `teller` `here <https://thierrymoudiki.github.io/blog/#ExplainableML>`_, and for current references, consult section :ref:`ref-references`. 
 
 .. toctree::
    :maxdepth: 1
