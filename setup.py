@@ -34,6 +34,7 @@ setup(
     include_package_data=True,
     author='T. Moudiki',
     install_requires=["numpy >= 1.13.0", "pandas >= 0.25.1", 
-                      "scipy >= 0.19.0", "scikit-learn >= 0.18.0"].append(install_requires),
+                      "scipy >= 0.19.0", "scikit-learn >= 0.18.0", 
+                      "joblib >= 0.13.2"].append(install_requires),
     author_email='thierry.moudiki@gmail.com'
 )
