@@ -2,7 +2,7 @@
 
 <hr>  
 
-![PyPI](https://img.shields.io/pypi/v/teller) [![PyPI - License](https://img.shields.io/pypi/l/the-teller)](https://github.com/thierrymoudiki/teller/blob/master/LICENSE) [![Downloads](https://pepy.tech/badge/the-teller)](https://pepy.tech/project/the-teller) [![Documentation Status](https://readthedocs.org/projects/the-teller/badge/?version=latest)](https://the-teller.readthedocs.io/en/latest/?badge=latest)
+![PyPI](https://img.shields.io/pypi/v/the-teller) [![PyPI - License](https://img.shields.io/pypi/l/the-teller)](https://github.com/thierrymoudiki/teller/blob/master/LICENSE) [![Downloads](https://pepy.tech/badge/the-teller)](https://pepy.tech/project/the-teller) [![Documentation Status](https://readthedocs.org/projects/the-teller/badge/?version=latest)](https://the-teller.readthedocs.io/en/latest/?badge=latest)
 
 
 There is an increasing need for __transparency__ and __fairness__ in Machine Learning (ML) models  predictions. Consider for example a banker who has to explain to a client why his/her loan application is rejected, or a health professional who must explain what constitutes his/her diagnosis. Some ML models are indeed very accurate, but are considered  hard to explain, relatively to popular linear models. 
