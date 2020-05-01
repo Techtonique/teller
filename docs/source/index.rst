@@ -13,7 +13,7 @@ The teller's documentation
       :alt: PyPI - License
 
 
-.. image:: https://pepy.tech/badge/teller
+.. image:: https://pepy.tech/badge/the-teller
       :target: https://pepy.tech/project/the-teller
       :alt: Number of PyPI downloads
 
