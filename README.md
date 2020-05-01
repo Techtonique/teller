@@ -55,6 +55,9 @@ pip install black
 black --line-length=80 file_submitted_for_pr.py
 ```
 
+## API Documentation
+
+[https://the-teller.readthedocs.io/en/latest/?badge=latest](https://the-teller.readthedocs.io/en/latest/?badge=latest)
 
 ## Dependencies 
 

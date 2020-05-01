@@ -3,7 +3,7 @@
 The teller's documentation
 =========================================
 
-.. image:: https://img.shields.io/pypi/v/teller
+.. image:: https://img.shields.io/pypi/v/the-teller
       :target: https://pypi.org/project/the-teller/
       :alt: Latest PyPI version
 
