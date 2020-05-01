@@ -1,4 +1,4 @@
-# `nnetsauce` Code of Conduct
+# The `teller`'s Code of Conduct
 
 ## 1. Purpose
 
