@@ -6,7 +6,9 @@ from .numerical_gradient_jackknife import (
     numerical_gradient_jackknife,
     get_code_pval,
 )
+from .numerical_gradient_gaussian import numerical_gradient_gaussian
 from .numerical_interactions_jackknife import numerical_interactions_jackknife
+from .numerical_interactions_gaussian import numerical_interactions_gaussian
 from .progress_bar import Progbar
 from .scoring import score_regression, score_classification
 from .t_test import t_test
@@ -25,6 +27,8 @@ __all__ = [
     "numerical_interactions",
     "numerical_gradient_jackknife",
     "numerical_interactions_jackknife",
+    "numerical_gradient_gaussian",
+    "numerical_interactions_gaussian",
     "get_code_pval",
     "Progbar",
     "score_regression",

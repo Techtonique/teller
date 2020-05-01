@@ -9,6 +9,7 @@ from ..utils import (
     memoize,
     numerical_gradient,
     numerical_gradient_jackknife,
+    numerical_gradient_gaussian,
     score_regression,
     score_classification,
     t_test,

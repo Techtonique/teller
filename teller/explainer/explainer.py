@@ -5,8 +5,10 @@ from ..utils import (
     is_factor,
     numerical_gradient,
     numerical_gradient_jackknife,
+    numerical_gradient_gaussian,
     numerical_interactions,
     numerical_interactions_jackknife,
+    numerical_interactions_gaussian,
     Progbar,
     score_regression,
     score_classification,
@@ -55,6 +57,7 @@ class Explainer(BaseEstimator):
         X_names,
         y_name,
         method="avg",
+        type_ci="jackknife",
         scoring=None,
         level=95,
         col_inters=None,
@@ -109,14 +112,26 @@ class Explainer(BaseEstimator):
 
             # confidence intervals
             if method == "ci":
+                
+                if type_ci=="jackknife":
 
-                self.ci_ = numerical_gradient_jackknife(
-                    predict_proba,
-                    X,
-                    normalize=self.normalize,
-                    n_jobs=self.n_jobs,
-                    level=level,
-                )
+                    self.ci_ = numerical_gradient_jackknife(
+                        predict_proba,
+                        X,
+                        normalize=self.normalize,
+                        n_jobs=self.n_jobs,
+                        level=level,
+                    )
+                
+                if type_ci=="gaussian":
+
+                    self.ci_ = numerical_gradient_gaussian(
+                        predict_proba,
+                        X,
+                        normalize=self.normalize,
+                        n_jobs=self.n_jobs,
+                        level=level,
+                    )
 
             # interactions
             if method == "inters":
@@ -128,20 +143,40 @@ class Explainer(BaseEstimator):
                 ix1 = np.where(X_names == col_inters)[0][0]
 
                 pbar = Progbar(p)
+                
+                if type_ci=="jackknife":
+                    
+                    for ix2 in range(p):
 
-                for ix2 in range(p):
+                        self.ci_inters_.update(
+                            {
+                                X_names[ix2]: numerical_interactions_jackknife(
+                                    f=predict_proba,
+                                    X=X,
+                                    ix1=ix1,
+                                    ix2=ix2,
+                                    verbose=0,
+                                )
+                            }
+                        )
+    
+                        pbar.update(ix2)
+                
+                if type_ci=="gaussian":                
+                    
+                    for ix2 in range(p):
 
-                    self.ci_inters_.update(
-                        {
-                            X_names[ix2]: numerical_interactions_jackknife(
-                                f=predict_proba,
-                                X=X,
-                                ix1=ix1,
-                                ix2=ix2,
-                                verbose=0,
-                            )
-                        }
-                    )
+                        self.ci_inters_.update(
+                            {
+                                X_names[ix2]: numerical_interactions_gaussian(
+                                    f=predict_proba,
+                                    X=X,
+                                    ix1=ix1,
+                                    ix2=ix2,
+                                    verbose=0,
+                                )
+                            }
+                        )
 
                     pbar.update(ix2)
 
@@ -170,14 +205,29 @@ class Explainer(BaseEstimator):
 
             # confidence intervals
             if method == "ci":
-
-                self.ci_ = numerical_gradient_jackknife(
+                
+                if type_ci=="jackknife": 
+                                        
+                    self.ci_ = numerical_gradient_jackknife(
                     self.obj.predict,
                     X,
                     normalize=self.normalize,
                     n_jobs=self.n_jobs,
                     level=level,
                 )
+                    
+                
+                if type_ci=="gaussian": 
+                    
+                    self.ci_ = numerical_gradient_gaussian(
+                    self.obj.predict,
+                    X,
+                    normalize=self.normalize,
+                    n_jobs=self.n_jobs,
+                    level=level,
+                )
+
+                
 
             # interactions
             if method == "inters":
@@ -189,20 +239,40 @@ class Explainer(BaseEstimator):
                 ix1 = np.where(X_names == col_inters)[0][0]
 
                 pbar = Progbar(p)
-
-                for ix2 in range(p):
-
-                    self.ci_inters_.update(
-                        {
-                            X_names[ix2]: numerical_interactions_jackknife(
-                                f=self.obj.predict,
-                                X=X,
-                                ix1=ix1,
-                                ix2=ix2,
-                                verbose=0,
-                            )
-                        }
-                    )
+                
+                if type_ci=="jackknife": 
+                    
+                    for ix2 in range(p):
+    
+                        self.ci_inters_.update(
+                            {
+                                X_names[ix2]: numerical_interactions_jackknife(
+                                    f=self.obj.predict,
+                                    X=X,
+                                    ix1=ix1,
+                                    ix2=ix2,
+                                    verbose=0,
+                                )
+                            }
+                        )
+                
+                if type_ci=="gaussian": 
+                    
+                    for ix2 in range(p):
+    
+                        self.ci_inters_.update(
+                            {
+                                X_names[ix2]: numerical_interactions_gaussian(
+                                    f=self.obj.predict,
+                                    X=X,
+                                    ix1=ix1,
+                                    ix2=ix2,
+                                    verbose=0,
+                                )
+                            }
+                        )
+                    
+                    
 
                     pbar.update(ix2)
 
@@ -305,7 +375,10 @@ class Explainer(BaseEstimator):
                 print(self.residuals_dist_.to_string(index=False))
 
             print("\n")
-            print("Tests on marginal effects (Jackknife): ")
+            if type_ci=="jackknife": 
+                print("Tests on marginal effects (Jackknife): ")
+            if type_ci=="gaussian": 
+                print("Tests on marginal effects (Gaussian noise): ")
             with pd.option_context(
                 "display.max_rows", None, "display.max_columns", None
             ):
