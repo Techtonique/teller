@@ -121,6 +121,7 @@ class Explainer(BaseEstimator):
         self.level = level
         self.scoring = scoring
         self.method = method
+        self.type_ci = type_ci
 
         if is_factor(y):  # classification ---
 
