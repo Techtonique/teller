@@ -46,6 +46,7 @@ class Explainer(BaseEstimator):
         self.type_fit = None
         self.y_class = y_class  # classification only
         self.normalize = normalize
+        self.type_ci = None
 
 
     def fit(
@@ -424,9 +425,9 @@ class Explainer(BaseEstimator):
                 print(self.residuals_dist_.to_string(index=False))
 
             print("\n")
-            if type_ci=="jackknife": 
+            if self.type_ci=="jackknife": 
                 print("Tests on marginal effects (Jackknife): ")
-            if type_ci=="gaussian": 
+            if self.type_ci=="gaussian": 
                 print("Tests on marginal effects (Gaussian noise): ")
             with pd.option_context(
                 "display.max_rows", None, "display.max_columns", None
