@@ -1,0 +1,15 @@
+site_name: The teller
+theme:
+  name: mkdocs
+
+docs_dir: sources
+repo_url: https://github.com/Techtonique/teller
+edit_uri: ""
+site_description: 'Documentation for the teller.'
+extra_css: [extra.css]
+
+nav:
+    - Home: index.md
+    - Documentation:
+      - Comparator: documentation/comparator.md
+      - Explainer: documentation/explainer.md
