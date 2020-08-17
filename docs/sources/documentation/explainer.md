@@ -12,16 +12,16 @@ teller.Explainer(obj, n_jobs=None, y_class=0, normalize=False)
  
 __Arguments__
 
-- __`obj`__: an object;
+- __obj__: an object;
 fitted object containing methods `fit` and `predict`
 - __
-`n_jobs`__: an integer;
+n_jobs__: an integer;
 number of jobs for parallel computing
 - __
-`y_class`__: an integer;
+y_class__: an integer;
 class whose probability has to be explained (for classification only)
 - __
-`normalize`__: a boolean;
+normalize__: a boolean;
 whether the features must be normalized or not (changes the effects)
 
 __Examples__
@@ -49,54 +49,52 @@ Fit the explainer's attribute `obj` to training data (X, y).
 
 __Arguments__
 
-- __`X`__: array-like, shape = [n_samples, n_features]; 
-Training vectors, where n_samples is the number 
-of samples and n_features is the number of features.                
+- __X__: array-like, shape = [n_samples, n_features]; 
+ Training vectors, where n_samples is the number 
+ of samples and n_features is the number of features.                
 - __
-`y`__: array-like, shape = [n_samples, ]; Target values.
+ y__: array-like, shape = [n_samples, ]; Target values.
 - __
-`X_names`__: {array-like}, shape = [n_features, ]; 
-Column names (strings) for training vectors.            
+ X_names__: {array-like}, shape = [n_features, ]; 
+ Column names (strings) for training vectors.            
 - __
-`y_names`__: str;
-Column name (string) for vector of target values. 
+ y_names__: str;
+ Column name (string) for vector of target values. 
 - __
-`method`__: str;
-Type of summary requested for effects. Either `avg` 
-(for average effects), `inters` (for interactions) 
-or `ci` (for effects including confidence intervals
-around them). 
+ method__: str;
+ Type of summary requested for effects. Either `avg` 
+ (for average effects), `inters` (for interactions) 
+ or `ci` (for effects including confidence intervals
+ around them). 
 - __
-`type_ci`__: str;
-Type of resampling for `method == 'ci'` (confidence 
-intervals around effects). Either `jackknife` 
-bootsrapping or `gaussian` (gaussian white noise with 
-standard deviation equal to `0.01` applied to the 
-features).
+ type_ci__: str;
+ Type of resampling for `method == 'ci'` (confidence 
+ intervals around effects). Either `jackknife` 
+ bootsrapping or `gaussian` (gaussian white noise with 
+ standard deviation equal to `0.01` applied to the 
+ features).
 - __
-`scoring`__: str;
-measure of errors must be in ("explained_variance", 
-"neg_mean_absolute_error", "neg_mean_squared_error", 
-"neg_mean_squared_log_error", "neg_median_absolute_error", 
-- __"r2", "rmse") (default__: "rmse").
+ scoring__: str;
+ measure of errors must be in ("explained_variance", 
+ "neg_mean_absolute_error", "neg_mean_squared_error", 
+ "neg_mean_squared_log_error", "neg_median_absolute_error", 
+ "r2", "rmse") (default: "rmse").
 - __
-`level`__: int; Level of confidence required for 
-`method == 'ci'` (in \%).
+ level__: int; Level of confidence required for 
+ `method == 'ci'` (in %).
 - __
-`col_inters`__: str; Name of column for computing interactions
-       
-# Examples
+ col_inters__: str; Name of column for computing interactions.
+        
+# Examples 
 
 ```python
-    print("hello world")
-```    
-
-<hr style='color:white'>    
+ print("hello world")
+```
 
 
 ----
 
-<span style="float:right;">[[source]](https://github.com/Techtonique/teller/teller/explainer/explainer.py#L377)</span>
+<span style="float:right;">[[source]](https://github.com/Techtonique/teller/teller/explainer/explainer.py#L375)</span>
 
 ### summary
 

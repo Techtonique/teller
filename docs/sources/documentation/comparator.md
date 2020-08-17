@@ -12,10 +12,10 @@ teller.Comparator(obj1, obj2)
  
 __Arguments__
 
-- __`obj1`__: an object;
+- __obj1__: an object;
 fitted object containing methods `fit` and `predict`.
 - __
-`obj2`__: an object;
+obj2__: an object;
 fitted object containing methods `fit` and `predict`.
 
 __Examples__
