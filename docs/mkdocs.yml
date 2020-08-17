@@ -1,6 +1,5 @@
 site_name: The teller
-theme:
-  name: mkdocs
+theme: darkly
 
 docs_dir: sources
 repo_url: https://github.com/Techtonique/teller

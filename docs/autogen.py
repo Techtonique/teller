@@ -6,11 +6,14 @@ import keras_autodoc
 
 PAGES = {    
     'documentation/comparator.md': [
-        'teller.Comparator'        
+        'teller.Comparator',
+        'teller.Comparator.summary',
     ],
 
     'documentation/explainer.md': [
-        'teller.Explainer'
+        'teller.Explainer',
+        'teller.Explainer.fit',
+        'teller.Explainer.summary',
     ]
 }
 
