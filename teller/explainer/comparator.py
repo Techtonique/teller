@@ -22,10 +22,10 @@ class Comparator(BaseEstimator):
         
        # Arguments
        
-           `obj1`: an object;
+           obj1: an object;
            fitted object containing methods `fit` and `predict`.
 
-           `obj2`: an object;
+           obj2: an object;
            fitted object containing methods `fit` and `predict`.
 
        # Examples
