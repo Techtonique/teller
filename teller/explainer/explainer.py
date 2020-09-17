@@ -16,27 +16,21 @@ from ..utils import (
 
 
 class Explainer(BaseEstimator):
-    """**Class** Explainer: effects of features on the response.
+    """Class Explainer: effects of features on the response.
         
-       # Arguments
+    Attributes:
        
-           obj: an object;
-           fitted object containing methods `fit` and `predict`
+        obj: an object;
+            fitted object containing methods `fit` and `predict`
 
-           n_jobs: an integer;
-           number of jobs for parallel computing
+        n_jobs: an integer;
+            number of jobs for parallel computing
 
-           y_class: an integer;
-           class whose probability has to be explained (for classification only)
+        y_class: an integer;
+            class whose probability has to be explained (for classification only)
 
-           normalize: a boolean;
-           whether the features must be normalized or not (changes the effects)
-
-       # Examples
-       
-       ```python
-       print("hello world")
-       ```                
+        normalize: a boolean;
+            whether the features must be normalized or not (changes the effects)
 
     """
 
@@ -73,50 +67,44 @@ class Explainer(BaseEstimator):
     ):
         """Fit the explainer's attribute `obj` to training data (X, y).           
         
-           # Arguments
+        Args:
 
-                X: array-like, shape = [n_samples, n_features]; 
+            X: array-like, shape = [n_samples, n_features]; 
                 Training vectors, where n_samples is the number 
                 of samples and n_features is the number of features.                
 
-                y: array-like, shape = [n_samples, ]; Target values.
+            y: array-like, shape = [n_samples, ]; Target values.
 
-                X_names: {array-like}, shape = [n_features, ]; 
+            X_names: {array-like}, shape = [n_features, ]; 
                 Column names (strings) for training vectors.            
 
-                y_names: str;
+            y_names: str;
                 Column name (string) for vector of target values. 
 
-                method: str;
+            method: str;
                 Type of summary requested for effects. Either `avg` 
                 (for average effects), `inters` (for interactions) 
                 or `ci` (for effects including confidence intervals
                 around them). 
 
-                type_ci: str;
+            type_ci: str;
                 Type of resampling for `method == 'ci'` (confidence 
                 intervals around effects). Either `jackknife` 
                 bootsrapping or `gaussian` (gaussian white noise with 
                 standard deviation equal to `0.01` applied to the 
                 features).
 
-                scoring: str;
+            scoring: str;
                 measure of errors must be in ("explained_variance", 
                 "neg_mean_absolute_error", "neg_mean_squared_error", 
                 "neg_mean_squared_log_error", "neg_median_absolute_error", 
                 "r2", "rmse") (default: "rmse").
 
-                level: int; Level of confidence required for 
+            level: int; Level of confidence required for 
                 `method == 'ci'` (in %).
 
-                col_inters: str; Name of column for computing interactions.
+            col_inters: str; Name of column for computing interactions.
                        
-           # Examples 
-
-           ```python
-            print("hello world")
-           ```
-
         """
         assert method in (
             "avg",
@@ -375,13 +363,11 @@ class Explainer(BaseEstimator):
     def summary(self):
         """Summarise results 
 
-           a **method** in class Explainer 
+            a method in class Explainer 
 
-           # Examples 
+        Args: 
 
-           ```python
-            print("hello world")
-           ```
+            None   
 
         """        
 

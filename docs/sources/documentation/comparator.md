@@ -1,3 +1,7 @@
+# Comparator
+
+_Compare and explain predictions of two fitted models_
+
 <span style="float:right;">[[source]](https://github.com/Techtonique/teller/teller/explainer/comparator.py#L20)</span>
 
 ### Comparator
@@ -8,26 +12,20 @@ teller.Comparator(obj1, obj2)
 ```
 
 
-**Class** Comparator: Compare two models `obj1`, `obj2` ("estimators") based their predictions.
- 
-__Arguments__
+Class Comparator: Compare two models `obj1`, `obj2` ("estimators") based their predictions.
+    
+Attributes: 
+   
+    obj1: an object;
+        fitted object containing methods `fit` and `predict`.
 
-- __obj1__: an object;
-fitted object containing methods `fit` and `predict`.
-- __
-obj2__: an object;
-fitted object containing methods `fit` and `predict`.
-
-__Examples__
-
-```python
-print("hello world")
-```        
+    obj2: an object;
+       fitted object containing methods `fit` and `predict`.
 
 
 ----
 
-<span style="float:right;">[[source]](https://github.com/Techtonique/teller/teller/explainer/comparator.py#L46)</span>
+<span style="float:right;">[[source]](https://github.com/Techtonique/teller/teller/explainer/comparator.py#L40)</span>
 
 ### summary
 
@@ -37,15 +35,11 @@ Comparator.summary()
 ```
 
 
-Summarise results of model comparison
+Summarise results of model comparison            
 
-a **method** in class Comparator
+Args:  
 
-__Examples __
-
-```python
- print("hello world")
-```
+    None  
 
 
 ----

@@ -18,21 +18,15 @@ from ..utils import (
 
 
 class Comparator(BaseEstimator):
-    """**Class** Comparator: Compare two models `obj1`, `obj2` ("estimators") based their predictions.
+    """Class Comparator: Compare two models `obj1`, `obj2` ("estimators") based their predictions.
         
-       # Arguments
+    Attributes: 
        
-           obj1: an object;
-           fitted object containing methods `fit` and `predict`.
+        obj1: an object;
+            fitted object containing methods `fit` and `predict`.
 
-           obj2: an object;
+        obj2: an object;
            fitted object containing methods `fit` and `predict`.
-
-       # Examples
-       
-       ```python
-       print("hello world")
-       ```        
 
     """
 
@@ -44,15 +38,11 @@ class Comparator(BaseEstimator):
 
     # summary of the object -----
     def summary(self):
-        """Summarise results of model comparison
+        """Summarise results of model comparison            
 
-           a **method** in class Comparator
+        Args:  
 
-           # Examples 
-
-           ```python
-            print("hello world")
-           ```
+            None  
 
         """        
         
