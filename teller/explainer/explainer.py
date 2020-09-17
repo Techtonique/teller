@@ -16,18 +16,22 @@ from ..utils import (
 
 
 class Explainer(BaseEstimator):
-    """Class Explainer for: effects of features on the response.
+    """Class Explainer: effects of features on the response.
         
-       Parameters
-       ----------
-       obj: object
-           fitted object containing methods `fit` and `predict`
-       n_jobs: int
-           number of jobs for parallel computing
-       y_class: int
-           class whose probability has to be explained (for classification only)
-       normalize:  boolean
-           whether the features must be normalized or not (changes the effects)
+    Attributes:
+       
+        obj: an object;
+            fitted object containing methods `fit` and `predict`
+
+        n_jobs: an integer;
+            number of jobs for parallel computing
+
+        y_class: an integer;
+            class whose probability has to be explained (for classification only)
+
+        normalize: a boolean;
+            whether the features must be normalized or not (changes the effects)
+
     """
 
 
@@ -63,50 +67,44 @@ class Explainer(BaseEstimator):
     ):
         """Fit the explainer's attribute `obj` to training data (X, y).           
         
-        Parameters
-        ----------
-        X: {array-like}, shape = [n_samples, n_features]
-            Training vectors, where n_samples is the number 
-            of samples and n_features is the number of features.
-        
-        y: {array-like}, shape = [n_samples, ]
-            Target values.
+        Args:
 
-        X_names: {array-like}, shape = [n_features, ]
-             Column names (strings) for training vectors.
-        
-        y_names: str
-               Column name (string) for vector of target values. 
+            X: array-like, shape = [n_samples, n_features]; 
+                Training vectors, where n_samples is the number 
+                of samples and n_features is the number of features.                
 
-        method: str
+            y: array-like, shape = [n_samples, ]; Target values.
+
+            X_names: {array-like}, shape = [n_features, ]; 
+                Column names (strings) for training vectors.            
+
+            y_names: str;
+                Column name (string) for vector of target values. 
+
+            method: str;
                 Type of summary requested for effects. Either `avg` 
                 (for average effects), `inters` (for interactions) 
                 or `ci` (for effects including confidence intervals
                 around them). 
 
-        type_ci: str
+            type_ci: str;
                 Type of resampling for `method == 'ci'` (confidence 
                 intervals around effects). Either `jackknife` 
                 bootsrapping or `gaussian` (gaussian white noise with 
                 standard deviation equal to `0.01` applied to the 
-                features). 
+                features).
 
-        scoring: str
+            scoring: str;
                 measure of errors must be in ("explained_variance", 
                 "neg_mean_absolute_error", "neg_mean_squared_error", 
                 "neg_mean_squared_log_error", "neg_median_absolute_error", 
-                "r2", "rmse") (default: "rmse")
+                "r2", "rmse") (default: "rmse").
 
-        level: int
-            Level of confidence required for `method == 'ci'` (in %)
+            level: int; Level of confidence required for 
+                `method == 'ci'` (in %).
 
-        col_inters: str
-            Name of column for computing interactions
-
-                   
-        Returns
-        -------
-        self: object
+            col_inters: str; Name of column for computing interactions.
+                       
         """
         assert method in (
             "avg",
@@ -363,11 +361,14 @@ class Explainer(BaseEstimator):
 
 
     def summary(self):
-        """Summary of effects.                           
-               
-        Returns
-        -------
-        Prints the summary of effects.                         
+        """Summarise results 
+
+            a method in class Explainer 
+
+        Args: 
+
+            None   
+
         """        
 
         assert (
