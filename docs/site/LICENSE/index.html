@@ -4,26 +4,26 @@
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta name="description" content="Documentation for the teller.">
         
         
-        <link rel="shortcut icon" href="img/favicon.ico">
-        <title>Techtonique/teller</title>
-        <link href="css/bootstrap.min.css" rel="stylesheet">
-        <link href="css/font-awesome.min.css" rel="stylesheet">
-        <link href="css/base.css" rel="stylesheet">
+        
+        <link rel="shortcut icon" href="../img/favicon.ico">
+        <title>License - Techtonique/teller</title>
+        <link href="../css/bootstrap.min.css" rel="stylesheet">
+        <link href="../css/font-awesome.min.css" rel="stylesheet">
+        <link href="../css/base.css" rel="stylesheet">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/rainbow.min.css">
 
-        <script src="js/jquery-1.10.2.min.js" defer></script>
-        <script src="js/bootstrap.min.js" defer></script>
+        <script src="../js/jquery-1.10.2.min.js" defer></script>
+        <script src="../js/bootstrap.min.js" defer></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
         <script>hljs.initHighlightingOnLoad();</script> 
     </head>
 
-    <body class="homepage">
+    <body>
         <div class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark">
             <div class="container">
-                <a class="navbar-brand" href=".">Techtonique/teller</a>
+                <a class="navbar-brand" href="..">Techtonique/teller</a>
                 <!-- Expander button -->
                 <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbar-collapse">
                     <span class="navbar-toggler-icon"></span>
@@ -34,29 +34,29 @@
                         <!-- Main navigation -->
                         <ul class="nav navbar-nav">
                             <li class="navitem">
-                                <a href="quickstart/" class="nav-link">Quickstart examples</a>
+                                <a href="../quickstart/" class="nav-link">Quickstart examples</a>
                             </li>
                             <li class="dropdown">
                                 <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Documentation <b class="caret"></b></a>
                                 <ul class="dropdown-menu">
                                     
 <li>
-    <a href="documentation/comparator/" class="dropdown-item">Comparator</a>
+    <a href="../documentation/comparator/" class="dropdown-item">Comparator</a>
 </li>
                                     
 <li>
-    <a href="documentation/explainer/" class="dropdown-item">Explainer</a>
+    <a href="../documentation/explainer/" class="dropdown-item">Explainer</a>
 </li>
                                 </ul>
                             </li>
                             <li class="navitem">
-                                <a href="CONTRIBUTING/" class="nav-link">Contributing</a>
+                                <a href="../CONTRIBUTING/" class="nav-link">Contributing</a>
+                            </li>
+                            <li class="navitem active">
+                                <a href="./" class="nav-link">License</a>
                             </li>
                             <li class="navitem">
-                                <a href="LICENSE/" class="nav-link">License</a>
-                            </li>
-                            <li class="navitem">
-                                <a href="../" class="nav-link">Techtonique</a>
+                                <a href="../../" class="nav-link">Techtonique</a>
                             </li>
                         </ul>
 
@@ -66,6 +66,16 @@
                                 <i class="fa fa-search"></i> Search
                             </a>
                         </li>
+                            <li class="nav-item">
+                                <a rel="prev" href="../CONTRIBUTING/" class="nav-link">
+                                    <i class="fa fa-arrow-left"></i> Previous
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a rel="next" class="nav-link disabled">
+                                    Next <i class="fa fa-arrow-right"></i>
+                                </a>
+                            </li>
                             <li class="nav-item">
                                 <a href="https://github.com/Techtonique/teller" class="nav-link"><i class="fa fa-github"></i> GitHub</a>
                             </li>
@@ -86,84 +96,40 @@
     
     <div id="toc-collapse" class="navbar-collapse collapse card bg-secondary">
         <ul class="nav flex-column">
-            
-            <li class="nav-item" data-level="1"><a href="#teller" class="nav-link">teller</a>
-              <ul class="nav flex-column">
-            <li class="nav-item" data-level="2"><a href="#installing" class="nav-link">Installing</a>
-              <ul class="nav flex-column">
-              </ul>
-            </li>
-            <li class="nav-item" data-level="2"><a href="#quickstart" class="nav-link">Quickstart</a>
-              <ul class="nav flex-column">
-              </ul>
-            </li>
-            <li class="nav-item" data-level="2"><a href="#documentation" class="nav-link">Documentation</a>
-              <ul class="nav flex-column">
-              </ul>
-            </li>
-            <li class="nav-item" data-level="2"><a href="#contributing" class="nav-link">Contributing</a>
-              <ul class="nav flex-column">
-              </ul>
-            </li>
-              </ul>
-            </li>
         </ul>
     </div>
 </div></div>
                     <div class="col-md-9" role="main">
 
-<h1 id="teller">teller</h1>
-<p><img alt="PyPI" src="https://img.shields.io/pypi/v/the-teller" /> <a href="https://github.com/thierrymoudiki/teller/blob/master/LICENSE"><img alt="PyPI - License" src="https://img.shields.io/pypi/l/the-teller" /></a> <a href="https://pepy.tech/project/the-teller"><img alt="Downloads" src="https://pepy.tech/badge/the-teller" /></a></p>
-<p>Welcome to the <strong>teller</strong>'s website.</p>
-<p>There is an increasing need for <strong>transparency</strong> and <strong>fairness</strong> in Machine Learning (ML) models  predictions. Consider for example a banker who has to explain to a client why his/her loan application is rejected, or a health professional who must explain what constitutes his/her diagnosis. Some ML models are indeed very accurate, but are considered to be hard to explain, relatively to popular linear models. </p>
-<p><strong>Source of figure</strong>: James, Gareth, et al. An introduction to statistical learning. Vol. 112. New York: springer, 2013.
-<img alt="Source: James, Gareth, et al. An introduction to statistical learning. Vol. 112. New York: springer, 2013." src="image1.png" /></p>
-<p>We do not want to sacrifice this high accuracy to explainability.  Hence: <strong>ML explainability</strong>. There are a lot of ML explainability tools out there, <em>in the wild</em> (don't take my word for it).</p>
-<p>The <code>teller</code> is a <strong>model-agnostic tool for ML explainability</strong> - agnostic, as long as  this model possesses methods <code>fit</code> and <code>predict</code>. The <code>teller</code>'s philosophy is to rely on <a href="https://en.wikipedia.org/wiki/Taylor_series">Taylor series</a> to explain ML models predictions: a little increase in model's explanatory variables + a little decrease, and we can obtain approximate sensitivities of its predictions to changes in these explanatory variables. </p>
-<p>The <strong>teller</strong>'s source code is <a href="https://github.com/Techtonique/teller">available on GitHub</a>, and you can read posts about it <a href="https://thierrymoudiki.github.io/blog/#ExplainableML">in this blog</a>.</p>
-<p>Looking for a specific function? You can also use the <strong>search</strong> function available in the navigation bar.</p>
-<h2 id="installing">Installing</h2>
-<ul>
-<li>From Pypi, stable version:</li>
-</ul>
-<pre><code class="bash">pip install the-teller
-</code></pre>
+<p>The Clear BSD License</p>
+<p>Copyright (c) [2019] [Thierry Moudiki]
+All rights reserved.</p>
+<p>Redistribution and use in source and binary forms, with or without
+modification, are permitted (subject to the limitations in the disclaimer
+below) provided that the following conditions are met:</p>
+<pre><code> * Redistributions of source code must retain the above copyright notice,
+ this list of conditions and the following disclaimer.
 
-<ul>
-<li>From Github, for the development version: </li>
-</ul>
-<pre><code class="bash">pip install git+https://github.com/thierrymoudiki/teller.git
-</code></pre>
+ * Redistributions in binary form must reproduce the above copyright
+ notice, this list of conditions and the following disclaimer in the
+ documentation and/or other materials provided with the distribution.
 
-<h2 id="quickstart">Quickstart</h2>
-<ul>
-<li>
-<p><a href="https://github.com/Techtonique/teller/blob/master/teller/demo/thierrymoudiki_011119_boston_housing.ipynb">Heterogeneity of marginal effects</a></p>
-</li>
-<li>
-<p><a href="https://github.com/Techtonique/teller/blob/master/teller/demo/thierrymoudiki_081119_boston_housing.ipynb">Significance of marginal effects</a></p>
-</li>
-<li>
-<p><a href="https://github.com/Techtonique/teller/blob/master/teller/demo/thierrymoudiki_151119_boston_housing.ipynb">Model comparison</a></p>
-</li>
-<li>
-<p><a href="https://github.com/Techtonique/teller/blob/master/teller/demo/thierrymoudiki_041219_breast_cancer_classif.ipynb">Classification</a></p>
-</li>
-<li>
-<p><a href="https://github.com/Techtonique/teller/blob/master/teller/demo/thierrymoudiki_041219_boston_housing_interactions.ipynb">Interactions</a></p>
-</li>
-</ul>
-<h2 id="documentation">Documentation</h2>
-<ul>
-<li>
-<p>For the <a href="documentation/explainer/">Explainer</a></p>
-</li>
-<li>
-<p>For the <a href="documentation/comparator/">Comparator</a></p>
-</li>
-</ul>
-<h2 id="contributing">Contributing</h2>
-<p>Want to contribute to <strong>teller</strong>'s development on Github, <a href="CONTRIBUTING/">read this</a>!</p></div>
+ * Neither the name of the copyright holder nor the names of its
+ contributors may be used to endorse or promote products derived from this
+ software without specific prior written permission.
+</code></pre>
+<p>NO EXPRESS OR IMPLIED LICENSES TO ANY PARTY'S PATENT RIGHTS ARE GRANTED BY
+THIS LICENSE. THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND
+CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
+PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR
+BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER
+IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+POSSIBILITY OF SUCH DAMAGE.</p></div>
             </div>
         </div>
 
@@ -172,11 +138,11 @@
             <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
         </footer>
         <script>
-            var base_url = ".",
+            var base_url = "..",
                 shortcuts = {"help": 191, "next": 78, "previous": 80, "search": 83};
         </script>
-        <script src="js/base.js" defer></script>
-        <script src="search/main.js" defer></script>
+        <script src="../js/base.js" defer></script>
+        <script src="../search/main.js" defer></script>
 
         <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="searchModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
@@ -244,8 +210,3 @@
 
     </body>
 </html>
-
-<!--
-MkDocs version : 1.1.2
-Build Date UTC : 2020-09-17 22:35:39.138417+00:00
--->

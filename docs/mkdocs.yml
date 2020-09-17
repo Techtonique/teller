@@ -1,4 +1,4 @@
-site_name: The teller
+site_name: Techtonique/teller
 theme:
   name: darkly # sandstone # slate # lux # darkly
   nav_style: dark
@@ -18,4 +18,4 @@ nav:
       - Explainer: documentation/explainer.md
     - Contributing: CONTRIBUTING.md  
     - License: LICENSE.md  
-    - Techtonique: ../../  
+    - Techtonique: ../  
