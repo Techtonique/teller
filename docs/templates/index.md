@@ -1,6 +1,6 @@
 # teller
 
-![PyPI](https://img.shields.io/pypi/v/the-teller) [![PyPI - License](https://img.shields.io/pypi/l/the-teller)](https://github.com/thierrymoudiki/teller/blob/master/LICENSE) [![Downloads](https://pepy.tech/badge/the-teller)](https://pepy.tech/project/the-teller)
+![PyPI](https://img.shields.io/pypi/v/the-teller) [![PyPI - License](https://img.shields.io/pypi/l/the-teller)](https://github.com/thierrymoudiki/teller/blob/master/LICENSE) [![Downloads](https://pepy.tech/badge/the-teller)](https://pepy.tech/project/the-teller) [![Last Commit](https://img.shields.io/github/last-commit/Techtonique/teller)](https://github.com/Techtonique/teller)
 
 
 Welcome to the __teller__'s website.
@@ -31,20 +31,20 @@ pip install the-teller
 - From Github, for the development version: 
 
 ```bash
-pip install git+https://github.com/thierrymoudiki/teller.git
+pip install git+https://github.com/Techtonique/teller.git
 ```
 
 ## Quickstart 
 
-- [Heterogeneity of marginal effects](https://github.com/Techtonique/teller/blob/master/teller/demo/thierrymoudiki_011119_boston_housing.ipynb)
+- [Heterogeneity of marginal effects](https://github.com/Techtonique/teller/tree/master/teller/demo/thierrymoudiki_011119_boston_housing.ipynb)
 
-- [Significance of marginal effects](https://github.com/Techtonique/teller/blob/master/teller/demo/thierrymoudiki_081119_boston_housing.ipynb)
+- [Significance of marginal effects](https://github.com/Techtonique/teller/tree/master/teller/demo/thierrymoudiki_081119_boston_housing.ipynb)
 
-- [Model comparison](https://github.com/Techtonique/teller/blob/master/teller/demo/thierrymoudiki_151119_boston_housing.ipynb)
+- [Model comparison](https://github.com/Techtonique/teller/tree/master/teller/demo/thierrymoudiki_151119_boston_housing.ipynb)
 
-- [Classification](https://github.com/Techtonique/teller/blob/master/teller/demo/thierrymoudiki_041219_breast_cancer_classif.ipynb)
+- [Classification](https://github.com/Techtonique/teller/tree/master/teller/demo/thierrymoudiki_041219_breast_cancer_classif.ipynb)
 
-- [Interactions](https://github.com/Techtonique/teller/blob/master/teller/demo/thierrymoudiki_041219_boston_housing_interactions.ipynb)
+- [Interactions](https://github.com/Techtonique/teller/tree/master/teller/demo/thierrymoudiki_041219_boston_housing_interactions.ipynb)
 
 ## Documentation
 
