@@ -1,4 +1,4 @@
-# teller
+# teller | <a class="github-button" href="https://github.com/Techtonique/teller/stargazers" data-color-scheme="no-preference: light; light: light; dark: dark;" data-size="large" aria-label="Star dask/dask on GitHub">Star</a>
 
 ![PyPI](https://img.shields.io/pypi/v/the-teller) [![PyPI - License](https://img.shields.io/pypi/l/the-teller)](https://github.com/thierrymoudiki/teller/blob/master/LICENSE) [![Downloads](https://pepy.tech/badge/the-teller)](https://pepy.tech/project/the-teller) [![Last Commit](https://img.shields.io/github/last-commit/Techtonique/teller)](https://github.com/Techtonique/teller)
 
@@ -56,3 +56,5 @@ pip install git+https://github.com/Techtonique/teller.git
 ## Contributing
 
 Want to contribute to __teller__'s development on Github, [read this](CONTRIBUTING.md)!
+
+<script async defer src="https://buttons.github.io/buttons.js"></script>
