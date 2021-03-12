@@ -18,7 +18,7 @@ def score_regression(obj, X, y, scoring=None, **kwargs):
         preds = preds[0]
 
     if scoring is None:
-        scoring = "neg_mean_squared_error"
+        scoring = "rmse"
 
     # check inputs
     assert scoring in (
@@ -29,12 +29,12 @@ def score_regression(obj, X, y, scoring=None, **kwargs):
         "neg_median_absolute_error",
         "r2",
         "rmse",
-    ), "'scoring' should be in ('explained_variance', 'neg_mean_absolute_error', \
+    ), "'scoring' must be in ('explained_variance', 'neg_mean_absolute_error', \
                            'neg_mean_squared_error', 'neg_mean_squared_log_error', \
                            'neg_median_absolute_error', 'r2', 'rmse')"
 
-    def f_rmse(x):
-        return np.sqrt(skm.mean_squared_error(x))
+    def f_rmse(y, y_pred, **kwargs):
+        return np.sqrt(np.mean(np.square(y - y_pred)))
 
     scoring_options = {
         "explained_variance": skm.explained_variance_score,

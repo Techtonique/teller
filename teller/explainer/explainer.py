@@ -117,7 +117,6 @@ class Explainer(BaseEstimator):
         self.X_names = X_names
         self.y_name = y_name
         self.level = level
-        self.scoring = scoring
         self.method = method
         self.type_ci = type_ci
 
@@ -135,9 +134,11 @@ class Explainer(BaseEstimator):
 
             self.type_fit = "classification"
 
-            self.score_ = score_classification(self.obj, X, y, scoring=scoring)
             if scoring is None:
                 self.scoring = "accuracy"
+
+            self.score_ = score_classification(self.obj, X, y, scoring=self.scoring)
+
 
             def predict_proba(x):
                 return self.obj.predict_proba(x)[:, self.y_class]
@@ -231,9 +232,10 @@ class Explainer(BaseEstimator):
 
             self.type_fit = "regression"
 
-            self.score_ = score_regression(self.obj, X, y, scoring=scoring)
             if scoring is None:
                 self.scoring = "rmse"
+
+            self.score_ = score_regression(self.obj, X, y, scoring=self.scoring)
 
             y_hat = self.obj.predict(X)
 

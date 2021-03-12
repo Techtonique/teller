@@ -1,9 +1,9 @@
 import numpy as np
 from os import chdir
 
-wd="/Users/moudiki/Documents/Python_Packages/teller"
+#wd="/Users/moudiki/Documents/Python_Packages/teller"
 #
-chdir(wd)
+#chdir(wd)
 
 import teller as tr
 import pandas as pd
