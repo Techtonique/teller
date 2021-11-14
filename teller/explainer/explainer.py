@@ -1,5 +1,8 @@
 import numpy as np
 import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+import matplotlib.style as style
 from sklearn.base import BaseEstimator
 from ..utils import (
     is_factor,
@@ -148,7 +151,7 @@ class Explainer(BaseEstimator):
             # heterogeneity of effects
             if method == "avg":
 
-                self.grad = numerical_gradient(
+                self.grad_ = numerical_gradient(
                     predict_proba,
                     X,
                     normalize=self.normalize,
@@ -242,7 +245,7 @@ class Explainer(BaseEstimator):
             # heterogeneity of effects
             if method == "avg":
 
-                self.grad = numerical_gradient(
+                self.grad_ = numerical_gradient(
                     self.obj.predict,
                     X,
                     normalize=self.normalize,
@@ -340,7 +343,7 @@ class Explainer(BaseEstimator):
 
         if method == "avg":
 
-            res_df = pd.DataFrame(data=self.grad, columns=X_names)
+            res_df = pd.DataFrame(data=self.grad_, columns=X_names)
 
             res_df_mean = res_df.mean()
             res_df_std = res_df.std()
@@ -477,3 +480,35 @@ class Explainer(BaseEstimator):
                         ],
                     ).transpose()
                 )
+
+
+    def plot(self, what):
+        """Plot average effects, heterogeneity of effects, ...           
+        
+        Args:
+
+            what: a string; 
+                if .  
+        """   
+        assert self.effects_ is not None, "Call method 'fit' before plotting"
+
+        # For method == "avg"     
+        if (self.method == "avg"):  
+
+            if(what == "average_effects"): 
+                sns.set(style="darkgrid")
+                fi = pd.DataFrame()
+                fi['features'] = self.effects_.index.values
+                fi['effect'] = self.effects_['mean'].values
+                sns.barplot(x='effect', y='features', 
+                data=fi.sort_values(by='effect', ascending=False))              
+
+            if(what == "hetero_effects"): 
+                grads_df = pd.DataFrame(data=self.grad_, columns=self.X_names)
+                sorted_columns = list(self.effects_.index.values) # by mean
+                sorted_columns.reverse()
+                grads_df = grads_df.reindex(sorted_columns, axis=1)
+                sns.set(style="darkgrid")
+                grads_df.boxplot(vert=False)
+
+

@@ -13,7 +13,7 @@ here = path.abspath(path.dirname(__file__))
 with open(path.join(here, 'requirements.txt'), encoding='utf-8') as f:
     all_reqs = f.read().split('\n')
 
-install_requires = [x.strip() for x in all_reqs if 'git+' not in x]
+install_requires = [x.strip() for x in all_reqs if 'git+' not in x][:-1]
 
 setup(
     name='the-teller',
@@ -33,8 +33,6 @@ setup(
     packages=find_packages(exclude=['docs', 'tests*']),
     include_package_data=True,
     author='T. Moudiki',
-    install_requires=["numpy >= 1.13.0", "pandas >= 0.25.1", 
-                      "scipy >= 0.19.0", "scikit-learn >= 0.18.0", 
-                      "joblib >= 0.13.2"].append(install_requires),
+    install_requires=install_requires,
     author_email='thierry.moudiki@gmail.com'
 )
