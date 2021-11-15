@@ -44,26 +44,24 @@ expr = tr.Explainer(obj=regr)
 # heterogeneity of effects -----
 # fitting the explainer
 expr.fit(X_test, y_test, X_names=col_names[:-1], 
-         y_name=col_names[-1], method="avg")
+          method="avg")
 print(expr.summary())
 
 
 # confidence int. and tests on effects -----
 expr.fit(X_test, y_test, X_names=col_names[:-1], 
-         y_name=col_names[-1], method="ci")
+         method="ci")
 print(expr.summary())
 
 
 # interactions -----
 varx = "RAD"
-expr.fit(X_test, y_test, X_names=col_names[:-1], 
-         y_name=col_names[-1], 
+expr.fit(X_test, y_test, X_names=col_names[:-1],         
          col_inters = varx, method="inters")
 print(expr.summary())
 
 
 varx = "RM"
 expr.fit(X_test, y_test, X_names=col_names[:-1], 
-         y_name=col_names[-1], 
          col_inters = varx, method="inters")
 print(expr.summary())
