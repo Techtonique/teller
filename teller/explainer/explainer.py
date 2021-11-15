@@ -61,7 +61,6 @@ class Explainer(BaseEstimator):
         X,
         y,
         X_names,
-        y_name,
         method="avg",
         type_ci="jackknife",
         scoring=None,
@@ -80,9 +79,6 @@ class Explainer(BaseEstimator):
 
             X_names: {array-like}, shape = [n_features, ]; 
                 Column names (strings) for training vectors.            
-
-            y_names: str;
-                Column name (string) for vector of target values. 
 
             method: str;
                 Type of summary requested for effects. Either `avg` 
@@ -118,7 +114,6 @@ class Explainer(BaseEstimator):
         n, p = X.shape
 
         self.X_names = X_names
-        self.y_name = y_name
         self.level = level
         self.method = method
         self.type_ci = type_ci
