@@ -347,15 +347,17 @@ class Explainer(BaseEstimator):
 
             res_df_mean = res_df.mean()
             res_df_std = res_df.std()
+            res_df_median = res_df.median()
             res_df_min = res_df.min()
             res_df_max = res_df.max()
             data = pd.concat(
-                [res_df_mean, res_df_std, res_df_min, res_df_max], axis=1
+                [res_df_mean, res_df_std, res_df_median, res_df_min, res_df_max], 
+                axis=1
             )
 
             df_effects = pd.DataFrame(
                 data=data.values,
-                columns=["mean", "std", "min", "max"],
+                columns=["mean", "std", "median", "min", "max"],
                 index=X_names,
             )
 
@@ -491,6 +493,7 @@ class Explainer(BaseEstimator):
                 if .  
         """   
         assert self.effects_ is not None, "Call method 'fit' before plotting"
+        assert self.grad_ is not None, "Call method 'fit' before plotting"
 
         # For method == "avg"     
         if (self.method == "avg"):  
@@ -510,5 +513,10 @@ class Explainer(BaseEstimator):
                 grads_df = grads_df.reindex(sorted_columns, axis=1)
                 sns.set(style="darkgrid")
                 grads_df.boxplot(vert=False)
+
+        # For method == "ci"     
+        if (self.method == "ci"): 
+            assert self.ci_ is not None, "Call method 'fit' before plotting"
+            raise NotImplementedError("No plot for method == 'ci' yet")         
 
 
