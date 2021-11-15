@@ -515,3 +515,9 @@ class Explainer(BaseEstimator):
             raise NotImplementedError("No plot for method == 'ci' yet")         
 
 
+    def get_individual_effects(self):
+        assert self.grad_ is not None, "Call method 'fit' before calling this method"
+        if self.method == "avg": 
+            return pd.DataFrame(data=self.grad_, columns=self.X_names)    
+
+

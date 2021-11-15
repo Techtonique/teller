@@ -3,6 +3,7 @@
 - Add median to summary for method == "avg"
 - Plotting method for `method` == "avg" (average effects and heterogeneity)
 - remove `y_name` from method `fit`
+- add method to get individual effects for `method` == "avg"
 
 # version 0.5.0
 
