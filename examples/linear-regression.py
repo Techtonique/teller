@@ -43,8 +43,11 @@ expr = tr.Explainer(obj=regr)
 
 
 # fitting the explainer
-expr.fit(X_test, y_test, X_names=col_names[:-1], y_name=col_names[-1])
+expr.fit(X_test, y_test, X_names=col_names[:-1])
 
 
 # heterogeneity of effects
 print(expr.summary())
+
+
+expr.plot(what='average_effects')

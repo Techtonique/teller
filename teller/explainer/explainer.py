@@ -1,5 +1,8 @@
 import numpy as np
 import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+import matplotlib.style as style
 from sklearn.base import BaseEstimator
 from ..utils import (
     is_factor,
@@ -58,7 +61,6 @@ class Explainer(BaseEstimator):
         X,
         y,
         X_names,
-        y_name,
         method="avg",
         type_ci="jackknife",
         scoring=None,
@@ -77,9 +79,6 @@ class Explainer(BaseEstimator):
 
             X_names: {array-like}, shape = [n_features, ]; 
                 Column names (strings) for training vectors.            
-
-            y_names: str;
-                Column name (string) for vector of target values. 
 
             method: str;
                 Type of summary requested for effects. Either `avg` 
@@ -115,7 +114,6 @@ class Explainer(BaseEstimator):
         n, p = X.shape
 
         self.X_names = X_names
-        self.y_name = y_name
         self.level = level
         self.method = method
         self.type_ci = type_ci
@@ -148,7 +146,7 @@ class Explainer(BaseEstimator):
             # heterogeneity of effects
             if method == "avg":
 
-                self.grad = numerical_gradient(
+                self.grad_ = numerical_gradient(
                     predict_proba,
                     X,
                     normalize=self.normalize,
@@ -242,7 +240,7 @@ class Explainer(BaseEstimator):
             # heterogeneity of effects
             if method == "avg":
 
-                self.grad = numerical_gradient(
+                self.grad_ = numerical_gradient(
                     self.obj.predict,
                     X,
                     normalize=self.normalize,
@@ -340,19 +338,21 @@ class Explainer(BaseEstimator):
 
         if method == "avg":
 
-            res_df = pd.DataFrame(data=self.grad, columns=X_names)
+            res_df = pd.DataFrame(data=self.grad_, columns=X_names)
 
             res_df_mean = res_df.mean()
             res_df_std = res_df.std()
+            res_df_median = res_df.median()
             res_df_min = res_df.min()
             res_df_max = res_df.max()
             data = pd.concat(
-                [res_df_mean, res_df_std, res_df_min, res_df_max], axis=1
+                [res_df_mean, res_df_std, res_df_median, res_df_min, res_df_max], 
+                axis=1
             )
 
             df_effects = pd.DataFrame(
                 data=data.values,
-                columns=["mean", "std", "min", "max"],
+                columns=["mean", "std", "median", "min", "max"],
                 index=X_names,
             )
 
@@ -477,3 +477,47 @@ class Explainer(BaseEstimator):
                         ],
                     ).transpose()
                 )
+
+
+    def plot(self, what):
+        """Plot average effects, heterogeneity of effects, ...           
+        
+        Args:
+
+            what: a string; 
+                if .  
+        """   
+        assert self.effects_ is not None, "Call method 'fit' before plotting"
+        assert self.grad_ is not None, "Call method 'fit' before plotting"
+
+        # For method == "avg"     
+        if (self.method == "avg"):  
+
+            if(what == "average_effects"): 
+                sns.set(style="darkgrid")
+                fi = pd.DataFrame()
+                fi['features'] = self.effects_.index.values
+                fi['effect'] = self.effects_['mean'].values
+                sns.barplot(x='effect', y='features', 
+                data=fi.sort_values(by='effect', ascending=False))              
+
+            if(what == "hetero_effects"): 
+                grads_df = pd.DataFrame(data=self.grad_, columns=self.X_names)
+                sorted_columns = list(self.effects_.index.values) # by mean
+                sorted_columns.reverse()
+                grads_df = grads_df.reindex(sorted_columns, axis=1)
+                sns.set(style="darkgrid")
+                grads_df.boxplot(vert=False)
+
+        # For method == "ci"     
+        if (self.method == "ci"): 
+            assert self.ci_ is not None, "Call method 'fit' before plotting"
+            raise NotImplementedError("No plot for method == 'ci' yet")         
+
+
+    def get_individual_effects(self):
+        assert self.grad_ is not None, "Call method 'fit' before calling this method"
+        if self.method == "avg": 
+            return pd.DataFrame(data=self.grad_, columns=self.X_names)    
+
+

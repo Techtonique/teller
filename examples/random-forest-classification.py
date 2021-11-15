@@ -34,7 +34,7 @@ expr1 = tr.Explainer(obj=clf1, y_class=1, normalize=False)
 
 # fitting the explainer (for heterogeneity of effects only)
 expr1.fit(X_test, y_test, X_names=breast_cancer.feature_names, 
-          y_name="diagnosis", method="avg") 
+          method="avg") 
 
 # summary of results for the model
 print(expr1.summary())
@@ -42,7 +42,7 @@ print(expr1.summary())
 
 # confidence intervals and tests on marginal effects (Jackknife)
 expr1.fit(X_test, y_test, X_names=breast_cancer.feature_names, 
-          y_name="diagnosis", method="ci") 
+          method="ci") 
 
 # summary of results for the model
 print(expr1.summary())
