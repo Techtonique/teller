@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 from codecs import open
 from os import path
 
-__version__ = '0.6.3'
+__version__ = '0.7.0'
 
 
 with open("README.md", "r") as fh:

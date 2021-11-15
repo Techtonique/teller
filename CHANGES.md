@@ -1,3 +1,9 @@
+# version 0.7.0
+
+- Add median to summary for method == "avg"
+- Plotting method for `method` == "avg" (average effects and heterogeneity)
+- remove `y_name` from method `fit`
+
 # version 0.5.0
 
 - Add functionality for explaining interactions
