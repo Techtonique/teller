@@ -28,7 +28,7 @@ pip install the-teller
 - From Github, for the development version: 
 
 ```bash
-pip install git+https://github.com/thierrymoudiki/teller.git
+pip install git+https://github.com/Techtonique/teller.git
 ```
 
 
