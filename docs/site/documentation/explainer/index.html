@@ -12,11 +12,11 @@
         <link href="../../css/bootstrap.min.css" rel="stylesheet">
         <link href="../../css/font-awesome.min.css" rel="stylesheet">
         <link href="../../css/base.css" rel="stylesheet">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/rainbow.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/styles/rainbow.min.css">
 
         <script src="../../js/jquery-1.10.2.min.js" defer></script>
         <script src="../../js/bootstrap.min.js" defer></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/highlight.min.js"></script>
         <script>hljs.initHighlightingOnLoad();</script>
         <script>
             (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
@@ -65,7 +65,7 @@
                                 <a href="../../LICENSE/" class="nav-link">License</a>
                             </li>
                             <li class="navitem">
-                                <a href="../../../" class="nav-link">Techtonique</a>
+                                <a href="../../" class="nav-link">Techtonique</a>
                             </li>
                         </ul>
 
@@ -117,11 +117,10 @@
 
 <h1 id="explainer">Explainer</h1>
 <p><em>Explain predictions for a fitted model</em></p>
-<p><span style="float:right;"><a href="https://github.com/Techtonique/teller/teller/explainer/explainer.py#L18">[source]</a></span></p>
+<p><span style="float:right;"><a href="https://github.com/Techtonique/teller/blob/master/teller/explainer/explainer.py#L21">[source]</a></span></p>
 <h3 id="explainer_1">Explainer</h3>
-<pre><code class="python">teller.Explainer(obj, n_jobs=None, y_class=0, normalize=False)
+<pre><code class="language-python">teller.Explainer(obj, n_jobs=None, y_class=0, normalize=False)
 </code></pre>
-
 <p>Class Explainer: effects of features on the response.</p>
 <p>Attributes:</p>
 <pre><code>obj: an object;
@@ -137,13 +136,10 @@ normalize: a boolean;
     whether the features must be normalized or not (changes the effects)
 </code></pre>
 <hr />
-<p><span style="float:right;"><a href="https://github.com/Techtonique/teller/teller/explainer/explainer.py#L56">[source]</a></span></p>
+<p><span style="float:right;"><a href="https://github.com/Techtonique/teller/blob/master/teller/explainer/explainer.py#L59">[source]</a></span></p>
 <h3 id="fit">fit</h3>
-<pre><code class="python">Explainer.fit(
-    X, y, X_names, y_name, method=&quot;avg&quot;, type_ci=&quot;jackknife&quot;, scoring=None, level=95, col_inters=None
-)
+<pre><code class="language-python">Explainer.fit(X, y, X_names, method=&quot;avg&quot;, type_ci=&quot;jackknife&quot;, scoring=None, level=95, col_inters=None)
 </code></pre>
-
 <p>Fit the explainer's attribute <code>obj</code> to training data (X, y).           </p>
 <p>Args:</p>
 <pre><code>X: array-like, shape = [n_samples, n_features]; 
@@ -154,9 +150,6 @@ y: array-like, shape = [n_samples, ]; Target values.
 
 X_names: {array-like}, shape = [n_features, ]; 
     Column names (strings) for training vectors.
-
-y_names: str;
-    Column name (string) for vector of target values.
 
 method: str;
     Type of summary requested for effects. Either `avg` 
@@ -183,11 +176,10 @@ level: int; Level of confidence required for
 col_inters: str; Name of column for computing interactions.
 </code></pre>
 <hr />
-<p><span style="float:right;"><a href="https://github.com/Techtonique/teller/teller/explainer/explainer.py#L363">[source]</a></span></p>
+<p><span style="float:right;"><a href="https://github.com/Techtonique/teller/blob/master/teller/explainer/explainer.py#L365">[source]</a></span></p>
 <h3 id="summary">summary</h3>
-<pre><code class="python">Explainer.summary()
+<pre><code class="language-python">Explainer.summary()
 </code></pre>
-
 <p>Summarise results </p>
 <pre><code>a method in class Explainer
 </code></pre>
@@ -217,16 +209,13 @@ col_inters: str; Name of column for computing interactions.
                 <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
             </div>
             <div class="modal-body">
-                <p>
-                    From here you can search these documents. Enter
-                    your search terms below.
-                </p>
+                <p>From here you can search these documents. Enter your search terms below.</p>
                 <form>
                     <div class="form-group">
                         <input type="search" class="form-control" placeholder="Search..." id="mkdocs-search-query" title="Type search term here">
                     </div>
                 </form>
-                <div id="mkdocs-search-results"></div>
+                <div id="mkdocs-search-results" data-no-results-text="No results found"></div>
             </div>
             <div class="modal-footer">
             </div>

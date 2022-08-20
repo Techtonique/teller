@@ -24,7 +24,7 @@ def generate(dest_dir):
 
     doc_generator = keras_autodoc.DocumentationGenerator(
         PAGES,
-        'https://github.com/Techtonique/teller',
+        'https://github.com/Techtonique/teller/blob/master',
         template_dir,
         #teller_dir / 'examples'
     )

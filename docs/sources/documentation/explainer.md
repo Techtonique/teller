@@ -2,7 +2,7 @@
 
 _Explain predictions for a fitted model_
 
-<span style="float:right;">[[source]](https://github.com/Techtonique/teller/teller/explainer/explainer.py#L18)</span>
+<span style="float:right;">[[source]](https://github.com/Techtonique/teller/blob/master/teller/explainer/explainer.py#L21)</span>
 
 ### Explainer
 
@@ -31,15 +31,13 @@ Attributes:
 
 ----
 
-<span style="float:right;">[[source]](https://github.com/Techtonique/teller/teller/explainer/explainer.py#L56)</span>
+<span style="float:right;">[[source]](https://github.com/Techtonique/teller/blob/master/teller/explainer/explainer.py#L59)</span>
 
 ### fit
 
 
 ```python
-Explainer.fit(
-    X, y, X_names, y_name, method="avg", type_ci="jackknife", scoring=None, level=95, col_inters=None
-)
+Explainer.fit(X, y, X_names, method="avg", type_ci="jackknife", scoring=None, level=95, col_inters=None)
 ```
 
 
@@ -55,9 +53,6 @@ Args:
 
     X_names: {array-like}, shape = [n_features, ]; 
         Column names (strings) for training vectors.            
-
-    y_names: str;
-        Column name (string) for vector of target values. 
 
     method: str;
         Type of summary requested for effects. Either `avg` 
@@ -87,7 +82,7 @@ Args:
 
 ----
 
-<span style="float:right;">[[source]](https://github.com/Techtonique/teller/teller/explainer/explainer.py#L363)</span>
+<span style="float:right;">[[source]](https://github.com/Techtonique/teller/blob/master/teller/explainer/explainer.py#L365)</span>
 
 ### summary
 

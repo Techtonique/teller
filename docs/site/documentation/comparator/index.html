@@ -12,11 +12,11 @@
         <link href="../../css/bootstrap.min.css" rel="stylesheet">
         <link href="../../css/font-awesome.min.css" rel="stylesheet">
         <link href="../../css/base.css" rel="stylesheet">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/rainbow.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/styles/rainbow.min.css">
 
         <script src="../../js/jquery-1.10.2.min.js" defer></script>
         <script src="../../js/bootstrap.min.js" defer></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/highlight.min.js"></script>
         <script>hljs.initHighlightingOnLoad();</script>
         <script>
             (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
@@ -65,7 +65,7 @@
                                 <a href="../../LICENSE/" class="nav-link">License</a>
                             </li>
                             <li class="navitem">
-                                <a href="../../../" class="nav-link">Techtonique</a>
+                                <a href="../../" class="nav-link">Techtonique</a>
                             </li>
                         </ul>
 
@@ -117,11 +117,10 @@
 
 <h1 id="comparator">Comparator</h1>
 <p><em>Compare and explain predictions of two fitted models</em></p>
-<p><span style="float:right;"><a href="https://github.com/Techtonique/teller/teller/explainer/comparator.py#L20">[source]</a></span></p>
+<p><span style="float:right;"><a href="https://github.com/Techtonique/teller/blob/master/teller/explainer/comparator.py#L20">[source]</a></span></p>
 <h3 id="comparator_1">Comparator</h3>
-<pre><code class="python">teller.Comparator(obj1, obj2)
+<pre><code class="language-python">teller.Comparator(obj1, obj2)
 </code></pre>
-
 <p>Class Comparator: Compare two models <code>obj1</code>, <code>obj2</code> ("estimators") based their predictions.</p>
 <p>Attributes: </p>
 <pre><code>obj1: an object;
@@ -131,11 +130,10 @@ obj2: an object;
    fitted object containing methods `fit` and `predict`.
 </code></pre>
 <hr />
-<p><span style="float:right;"><a href="https://github.com/Techtonique/teller/teller/explainer/comparator.py#L40">[source]</a></span></p>
+<p><span style="float:right;"><a href="https://github.com/Techtonique/teller/blob/master/teller/explainer/comparator.py#L40">[source]</a></span></p>
 <h3 id="summary">summary</h3>
-<pre><code class="python">Comparator.summary()
+<pre><code class="language-python">Comparator.summary()
 </code></pre>
-
 <p>Summarise results of model comparison            </p>
 <p>Args:  </p>
 <pre><code>None
@@ -163,16 +161,13 @@ obj2: an object;
                 <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
             </div>
             <div class="modal-body">
-                <p>
-                    From here you can search these documents. Enter
-                    your search terms below.
-                </p>
+                <p>From here you can search these documents. Enter your search terms below.</p>
                 <form>
                     <div class="form-group">
                         <input type="search" class="form-control" placeholder="Search..." id="mkdocs-search-query" title="Type search term here">
                     </div>
                 </form>
-                <div id="mkdocs-search-results"></div>
+                <div id="mkdocs-search-results" data-no-results-text="No results found"></div>
             </div>
             <div class="modal-footer">
             </div>

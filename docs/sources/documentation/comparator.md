@@ -2,7 +2,7 @@
 
 _Compare and explain predictions of two fitted models_
 
-<span style="float:right;">[[source]](https://github.com/Techtonique/teller/teller/explainer/comparator.py#L20)</span>
+<span style="float:right;">[[source]](https://github.com/Techtonique/teller/blob/master/teller/explainer/comparator.py#L20)</span>
 
 ### Comparator
 
@@ -25,7 +25,7 @@ Attributes:
 
 ----
 
-<span style="float:right;">[[source]](https://github.com/Techtonique/teller/teller/explainer/comparator.py#L40)</span>
+<span style="float:right;">[[source]](https://github.com/Techtonique/teller/blob/master/teller/explainer/comparator.py#L40)</span>
 
 ### summary
 
