@@ -13,7 +13,13 @@ PAGES = {
         'teller.Explainer',
         'teller.Explainer.fit',
         'teller.Explainer.summary',
-    ]
+    ],
+
+    'documentation/prediction_interval.md': [
+        'teller.PredictionInterval',
+        'teller.PredictionInterval.fit',
+        'teller.PredictionInterval.predict',
+    ]    
 }
 
 teller_dir = pathlib.Path(__file__).resolve().parents[1]
