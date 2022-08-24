@@ -1,4 +1,6 @@
+from locale import normalize
 import numpy as np
+import pickle
 from sklearn.base import BaseEstimator, RegressorMixin
 from sklearn.model_selection import train_test_split
 from ..nonconformist import IcpRegressor
@@ -17,7 +19,7 @@ class PredictionInterval(BaseEstimator, RegressorMixin):
 
         method: a string;
             method for constructing the prediction intervals. 
-            Currently "splitconformal" (default) 
+            Currently "splitconformal" (default) and "localconformal"
 
         level: a float;                
             Confidence level for prediction intervals. Default is 0.9, 
@@ -49,14 +51,20 @@ class PredictionInterval(BaseEstimator, RegressorMixin):
                        
         """       
 
-        if self.method == "splitconformal": 
-
-            X_train, X_calibration, y_train, y_calibration = train_test_split(X, y, 
+        X_train, X_calibration, y_train, y_calibration = train_test_split(X, y, 
                                                     test_size=0.5, random_state=self.seed)
-            nc = RegressorNc(self.obj, AbsErrorErrFunc())
-            self.icp_ = IcpRegressor(nc)
-            self.icp_.fit(X_train, y_train) 
-            self.icp_.calibrate(X_calibration, y_calibration)
+
+        if self.method == "splitconformal":             
+            nc = RegressorNc(self.obj, AbsErrorErrFunc())            
+
+        if self.method == "localconformal":
+            mad_estimator = pickle.loads(pickle.dumps(self.obj, -1))
+            normalizer = RegressorNormalizer(self.obj, mad_estimator, AbsErrorErrFunc())
+            nc = RegressorNc(self.obj, AbsErrorErrFunc(), normalizer)
+        
+        self.icp_ = IcpRegressor(nc)
+        self.icp_.fit(X_train, y_train) 
+        self.icp_.calibrate(X_calibration, y_calibration)
 
         return self
 
@@ -68,11 +76,18 @@ class PredictionInterval(BaseEstimator, RegressorMixin):
 
             X: array-like, shape = [n_samples, n_features]; 
                 Testing set vectors, where n_samples is the number 
-                of samples and n_features is the number of features.                
+                of samples and n_features is the number of features. 
+
+            return_pi: boolean               
+                Whether the prediction interval is returned or not. 
+                Default is False, for compatibility with other _estimators_.
+                If True, a tuple containing the predictions + lower and upper 
+                bounds is returned.
 
         """                
 
         pred = self.obj.predict(X)
+        
         if return_pi:
             predictions = self.icp_.predict(X, significance = 1-self.level)
             return pred, predictions[:, 0], predictions[:, 1]

@@ -2,7 +2,7 @@
 
 _Obtain prediction intervals for input models_
 
-<span style="float:right;">[[source]](https://github.com/Techtonique/teller/blob/master/teller/predictioninterval/predictioninterval.py#L10)</span>
+<span style="float:right;">[[source]](https://github.com/Techtonique/teller/blob/master/teller/predictioninterval/predictioninterval.py#L12)</span>
 
 ### PredictionInterval
 
@@ -21,7 +21,7 @@ Attributes:
 
     method: a string;
         method for constructing the prediction intervals. 
-        Currently "splitconformal" (default) 
+        Currently "splitconformal" (default) and "localconformal"
 
     level: a float;                
         Confidence level for prediction intervals. Default is 0.9, 
@@ -33,7 +33,7 @@ Attributes:
 
 ----
 
-<span style="float:right;">[[source]](https://github.com/Techtonique/teller/blob/master/teller/predictioninterval/predictioninterval.py#L39)</span>
+<span style="float:right;">[[source]](https://github.com/Techtonique/teller/blob/master/teller/predictioninterval/predictioninterval.py#L41)</span>
 
 ### fit
 
@@ -43,7 +43,7 @@ PredictionInterval.fit(X, y)
 ```
 
 
-Fit the PredictionInterval method to training data (X, y).           
+Fit the `method` to training data (X, y).           
 
 Args:
 
@@ -57,13 +57,13 @@ Args:
 
 ----
 
-<span style="float:right;">[[source]](https://github.com/Techtonique/teller/blob/master/teller/predictioninterval/predictioninterval.py#L64)</span>
+<span style="float:right;">[[source]](https://github.com/Techtonique/teller/blob/master/teller/predictioninterval/predictioninterval.py#L72)</span>
 
 ### predict
 
 
 ```python
-PredictionInterval.predict(X)
+PredictionInterval.predict(X, return_pi=False)
 ```
 
 
@@ -73,7 +73,13 @@ Args:
 
     X: array-like, shape = [n_samples, n_features]; 
         Testing set vectors, where n_samples is the number 
-        of samples and n_features is the number of features.                
+        of samples and n_features is the number of features. 
+
+    return_pi: boolean               
+        Whether the prediction interval is returned or not. 
+        Default is False, for compatibility with other _estimators_.
+        If True, a tuple containing the predictions + lower and upper 
+        bounds is returned.
 
 
 ----
