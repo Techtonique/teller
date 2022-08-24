@@ -61,7 +61,7 @@ class PredictionInterval(BaseEstimator, RegressorMixin):
         return self
 
 
-    def predict(self, X):
+    def predict(self, X, return_pi=False):
         """Obtain predictions and prediction intervals            
 
         Args: 
@@ -70,11 +70,12 @@ class PredictionInterval(BaseEstimator, RegressorMixin):
                 Testing set vectors, where n_samples is the number 
                 of samples and n_features is the number of features.                
 
-        """        
-
-        predictions = self.icp_.predict(X, significance=1-self.level)
+        """                
 
         pred = self.obj.predict(X)
-
-        return pred, predictions[:, 0], predictions[:, 1]
+        if return_pi:
+            predictions = self.icp_.predict(X, significance = 1-self.level)
+            return pred, predictions[:, 0], predictions[:, 1]
+        else:
+            return pred
 
