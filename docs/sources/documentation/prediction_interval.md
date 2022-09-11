@@ -8,7 +8,7 @@ _Obtain prediction intervals for input models_
 
 
 ```python
-teller.PredictionInterval(obj, method="splitconformal", level=0.9, seed=123)
+teller.PredictionInterval(obj, method="splitconformal", level=0.95, seed=123)
 ```
 
 
@@ -24,8 +24,8 @@ Attributes:
         Currently "splitconformal" (default) and "localconformal"
 
     level: a float;                
-        Confidence level for prediction intervals. Default is 0.9, 
-        equivalent to a miscoverage error of 0.1
+        Confidence level for prediction intervals. Default is 0.95, 
+        equivalent to a miscoverage error of 0.05
     
     seed: an integer;
         Reproducibility of fit (there's a random split between fitting and calibration data)
