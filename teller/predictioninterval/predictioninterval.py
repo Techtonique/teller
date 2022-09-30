@@ -75,7 +75,7 @@ class PredictionInterval(BaseEstimator, RegressorMixin):
 
         if self.method == "localconformal":
 
-            mad_estimator = RandomForestRegressor(n_estimators=250)
+            mad_estimator = RandomForestRegressor()
             normalizer = RegressorNormalizer(self.obj, mad_estimator, AbsErrorErrFunc())
             nc = RegressorNc(self.obj, AbsErrorErrFunc(), normalizer)
         
