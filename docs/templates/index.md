@@ -49,7 +49,7 @@ pip install git+https://github.com/Techtonique/teller.git
 
 - [Interactions](https://github.com/Techtonique/teller/tree/master/teller/demo/thierrymoudiki_041219_boston_housing_interactions.ipynb)
 
-- [Prediction intervals for regression](https://github.com/Techtonique/teller/tree/master/teller/demo/thierrymoudiki_031022_diabetes-pred-interval.ipynb)
+- [Prediction intervals for regression](https://github.com/Techtonique/teller/tree/master/teller/demo/thierrymoudiki_031022_diabetes_pred_interval.ipynb)
 
 ## Documentation
 
