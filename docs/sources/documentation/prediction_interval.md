@@ -2,7 +2,7 @@
 
 _Obtain prediction intervals for input models_
 
-<span style="float:right;">[[source]](https://github.com/Techtonique/teller/blob/master/teller/predictioninterval/predictioninterval.py#L12)</span>
+<span style="float:right;">[[source]](https://github.com/Techtonique/teller/blob/master/teller/predictioninterval/predictioninterval.py#L13)</span>
 
 ### PredictionInterval
 
@@ -33,7 +33,7 @@ Attributes:
 
 ----
 
-<span style="float:right;">[[source]](https://github.com/Techtonique/teller/blob/master/teller/predictioninterval/predictioninterval.py#L41)</span>
+<span style="float:right;">[[source]](https://github.com/Techtonique/teller/blob/master/teller/predictioninterval/predictioninterval.py#L43)</span>
 
 ### fit
 
@@ -57,7 +57,7 @@ Args:
 
 ----
 
-<span style="float:right;">[[source]](https://github.com/Techtonique/teller/blob/master/teller/predictioninterval/predictioninterval.py#L72)</span>
+<span style="float:right;">[[source]](https://github.com/Techtonique/teller/blob/master/teller/predictioninterval/predictioninterval.py#L89)</span>
 
 ### predict
 

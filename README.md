@@ -12,9 +12,12 @@ There is an increasing need for __transparency__ and __fairness__ in Machine Lea
 __Source of figure__: James, Gareth, et al. An introduction to statistical learning. Vol. 112. New York: springer, 2013.
 ![Source: James, Gareth, et al. An introduction to statistical learning. Vol. 112. New York: springer, 2013.](image1.png)
 
-We do not want to sacrifice this high accuracy to explainability.  Hence: __ML explainability__. There are a lot of ML explainability tools out there, _in the wild_ (don't take my word for it).
+We do not want to sacrifice this high accuracy to explainability.  Hence: __ML explainability__. There are a lot of ML explainability tools out there, _in the wild_.
 
-The `teller` is a __model-agnostic tool for ML explainability__ - agnostic, as long as  this model possesses methods `fit` and `predict`. The `teller`'s philosophy is to rely on [Taylor series](https://en.wikipedia.org/wiki/Taylor_series) to explain ML models predictions: a little increase in model's explanatory variables + a little decrease, and we can obtain approximate sensitivities of its predictions to changes in these explanatory variables. 
+The `teller` is a __model-agnostic tool for ML explainability__. _Agnostic_, as long as the input ML model possesses methods `fit` and `predict`, and is applied to tabular data. The `teller` relies on:
+
+- [Finite differences](https://en.wikipedia.org/wiki/Finite_difference) to explain ML models predictions: a little increase in model's explanatory variables + a little decrease, and we can obtain approximate sensitivities of its predictions to changes in these explanatory variables. 
+- [Conformal prediction](https://en.wikipedia.org/wiki/Conformal_prediction) (so far, as of october 2022) to obtain prediction intervals for ML methods
 
 
 ## Installation 
@@ -41,6 +44,7 @@ These notebooks will be some good introductions:
 - [Model comparison](/teller/demo/thierrymoudiki_151119_boston_housing.ipynb)
 - [Classification](/teller/demo/thierrymoudiki_041219_breast_cancer_classif.ipynb)
 - [Interactions](/teller/demo/thierrymoudiki_041219_boston_housing_interactions.ipynb)
+- [Prediction intervals for regression](/teller/demo/thierrymoudiki_031022_diabetes-pred-interval.ipynb)
 
 
 ## Contributing
@@ -83,10 +87,15 @@ black --line-length=80 file_submitted_for_pr.py
 
 ## References
 
+For **sensitivity analysis**: 
+
 - Press, W. H., Teukolsky, S. A., Vetterling, W. T., & Flannery, B. P. (1992). Numerical recipes in C (Vol. 2). Cambridge: Cambridge university press.
 - Jones E, Oliphant E, Peterson P, et al. SciPy: Open Source Scientific Tools for Python, 2001-, http://www.scipy.org/ [Online; accessed 2019-01-04]
 - Scikit-learn: Machine Learning in Python, Pedregosa et al., JMLR 12, pp. 2825-2830, 2011.
 
+For **prediction intervals**: 
+
+- Romano, Y., Patterson, E., & Candes, E. (2019). Conformalized quantile regression. Advances in neural information processing systems, 32.
 
 ## License
 
