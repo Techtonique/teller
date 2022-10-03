@@ -44,7 +44,7 @@ These notebooks will be some good introductions:
 - [Model comparison](/teller/demo/thierrymoudiki_151119_boston_housing.ipynb)
 - [Classification](/teller/demo/thierrymoudiki_041219_breast_cancer_classif.ipynb)
 - [Interactions](/teller/demo/thierrymoudiki_041219_boston_housing_interactions.ipynb)
-- [Prediction intervals for regression](/teller/demo/thierrymoudiki_031022_diabetes-pred-interval.ipynb)
+- [Prediction intervals for regression](/teller/demo/thierrymoudiki_031022_diabetes_pred_interval.ipynb)
 
 
 ## Contributing
