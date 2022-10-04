@@ -17,16 +17,7 @@
         <script src="js/jquery-1.10.2.min.js" defer></script>
         <script src="js/bootstrap.min.js" defer></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/highlight.min.js"></script>
-        <script>hljs.initHighlightingOnLoad();</script>
-        <script>
-            (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-            })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
-
-            ga('create', 'UA-146345113-2', 'https://techtonique.github.io/teller/');
-            ga('send', 'pageview');
-        </script> 
+        <script>hljs.initHighlightingOnLoad();</script> 
     </head>
 
     <body class="homepage">
@@ -55,6 +46,10 @@
                                     
 <li>
     <a href="documentation/explainer/" class="dropdown-item">Explainer</a>
+</li>
+                                    
+<li>
+    <a href="documentation/prediction_interval/" class="dropdown-item">PredictionInterval</a>
 </li>
                                 </ul>
                             </li>
@@ -110,6 +105,10 @@
               <ul class="nav flex-column">
               </ul>
             </li>
+            <li class="nav-item" data-level="2"><a href="#references" class="nav-link">References</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
             <li class="nav-item" data-level="2"><a href="#contributing" class="nav-link">Contributing</a>
               <ul class="nav flex-column">
               </ul>
@@ -124,11 +123,15 @@
 <h1 id="teller-star">teller | <a class="github-button" href="https://github.com/Techtonique/teller/stargazers" data-color-scheme="no-preference: light; light: light; dark: dark;" data-size="large" aria-label="Star the teller /the teller  on GitHub">Star</a></h1>
 <p><img alt="PyPI" src="https://img.shields.io/pypi/v/the-teller" /> <a href="https://github.com/thierrymoudiki/teller/blob/master/LICENSE"><img alt="PyPI - License" src="https://img.shields.io/pypi/l/the-teller" /></a> <a href="https://pepy.tech/project/the-teller"><img alt="Downloads" src="https://pepy.tech/badge/the-teller" /></a> <a href="https://github.com/Techtonique/teller"><img alt="Last Commit" src="https://img.shields.io/github/last-commit/Techtonique/teller" /></a></p>
 <p>Welcome to the <strong>teller</strong>'s website.</p>
-<p>There is an increasing need for <strong>transparency</strong> and <strong>fairness</strong> in Machine Learning (ML) models  predictions. Consider for example a banker who has to explain to a client why his/her loan application is rejected, or a health professional who must explain what constitutes his/her diagnosis. Some ML models are indeed very accurate, but are considered to be hard to explain, relatively to popular linear models. </p>
+<p>There is an increasing need for <strong>transparency</strong> and <strong>fairness</strong> in Machine Learning (ML) models  predictions. Consider for example a banker who has to explain to a client why his/her loan application is rejected, or a healthcare professional who must explain what constitutes his/her diagnosis. Some ML models are indeed very accurate, but are considered to be hard to explain, relatively to popular linear models. </p>
 <p><strong>Source of figure</strong>: James, Gareth, et al. An introduction to statistical learning. Vol. 112. New York: springer, 2013.
 <img alt="Source: James, Gareth, et al. An introduction to statistical learning. Vol. 112. New York: springer, 2013." src="image1.png" /></p>
-<p>We do not want to sacrifice this high accuracy to explainability.  Hence: <strong>ML explainability</strong>. There are a lot of ML explainability tools out there, <em>in the wild</em> (don't take my word for it).</p>
-<p>The <code>teller</code> is a <strong>model-agnostic tool for ML explainability</strong> - agnostic, as long as  this model possesses methods <code>fit</code> and <code>predict</code>. The <code>teller</code>'s philosophy is to rely on <a href="https://en.wikipedia.org/wiki/Taylor_series">Taylor series</a> to explain ML models predictions: a little increase in model's explanatory variables + a little decrease, and we can obtain approximate sensitivities of its predictions to changes in these explanatory variables. </p>
+<p>We do not want to sacrifice this high accuracy to explainability.  Hence: <strong>ML explainability</strong>. There are a lot of ML explainability tools out there, <em>in the wild</em>.</p>
+<p>The <code>teller</code> is a <strong>model-agnostic tool for ML explainability</strong>. <em>Agnostic</em>, as long as the input ML model possesses methods <code>fit</code> and <code>predict</code>, and is applied to tabular data. The <code>teller</code> relies on:</p>
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/Finite_difference">Finite differences</a> to explain ML models predictions: a little increase in model's explanatory variables + a little decrease, and we can obtain approximate sensitivities of its predictions to changes in these explanatory variables. </li>
+<li><a href="https://en.wikipedia.org/wiki/Conformal_prediction">Conformal prediction</a> (so far, as of october 2022) to obtain prediction intervals for ML regression methods</li>
+</ul>
 <p>The <strong>teller</strong>'s source code is <a href="https://github.com/Techtonique/teller">available on GitHub</a>, and you can read posts about it <a href="https://thierrymoudiki.github.io/blog/#ExplainableML">in this blog</a>.</p>
 <p>Looking for a specific function? You can also use the <strong>search</strong> function available in the navigation bar.</p>
 <h2 id="installing">Installing</h2>
@@ -159,6 +162,9 @@
 <li>
 <p><a href="https://github.com/Techtonique/teller/tree/master/teller/demo/thierrymoudiki_041219_boston_housing_interactions.ipynb">Interactions</a></p>
 </li>
+<li>
+<p><a href="https://github.com/Techtonique/teller/tree/master/teller/demo/thierrymoudiki_031022_diabetes_pred_interval.ipynb">Prediction intervals for regression</a></p>
+</li>
 </ul>
 <h2 id="documentation">Documentation</h2>
 <ul>
@@ -168,6 +174,20 @@
 <li>
 <p>For the <a href="documentation/comparator/">Comparator</a></p>
 </li>
+<li>
+<p>For <a href="documentation/prediction_interval/">PredictionInterval</a></p>
+</li>
+</ul>
+<h2 id="references">References</h2>
+<p>For <strong>sensitivity analysis</strong>: </p>
+<ul>
+<li>Press, W. H., Teukolsky, S. A., Vetterling, W. T., &amp; Flannery, B. P. (1992). Numerical recipes in C (Vol. 2). Cambridge: Cambridge university press.</li>
+<li>Jones E, Oliphant E, Peterson P, et al. SciPy: Open Source Scientific Tools for Python, 2001-, http://www.scipy.org/ [Online; accessed 2019-01-04]</li>
+<li>Scikit-learn: Machine Learning in Python, Pedregosa et al., JMLR 12, pp. 2825-2830, 2011.</li>
+</ul>
+<p>For <strong>prediction intervals</strong>: </p>
+<ul>
+<li>Romano, Y., Patterson, E., &amp; Candes, E. (2019). Conformalized quantile regression. Advances in neural information processing systems, 32.</li>
 </ul>
 <h2 id="contributing">Contributing</h2>
 <p>Want to contribute to <strong>teller</strong>'s development on Github, <a href="CONTRIBUTING/">read this</a>!</p>
@@ -252,5 +272,5 @@
 
 <!--
 MkDocs version : 1.3.1
-Build Date UTC : 2022-08-20 17:08:57.011895+00:00
+Build Date UTC : 2022-10-03 15:29:37.192076+00:00
 -->
