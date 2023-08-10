@@ -1,9 +1,10 @@
 import numpy as np
 import pandas as pd
 import seaborn as sns
-import matplotlib.pyplot as plt
-import matplotlib.style as style
+
+from joblib import Parallel, delayed
 from sklearn.base import BaseEstimator
+from tqdm import tqdm
 from ..utils import (
     is_factor,
     numerical_gradient,
@@ -156,7 +157,7 @@ class Explainer(BaseEstimator):
             # confidence intervals
             if method == "ci":
                 
-                if type_ci=="jackknife":
+                if type_ci == "jackknife":
 
                     self.ci_ = numerical_gradient_jackknife(
                         predict_proba,
@@ -166,7 +167,7 @@ class Explainer(BaseEstimator):
                         level=level,
                     )
                 
-                if type_ci=="gaussian":
+                if type_ci == "gaussian":
 
                     self.ci_ = numerical_gradient_gaussian(
                         predict_proba,
@@ -183,11 +184,11 @@ class Explainer(BaseEstimator):
 
                 self.col_inters = col_inters
 
-                ix1 = np.where(X_names == col_inters)[0][0]
+                ix1 = np.where(np.asarray(X_names) == col_inters)[0][0]
 
                 pbar = Progbar(p)
                 
-                if type_ci=="jackknife":
+                if type_ci == "jackknife":
                     
                     for ix2 in range(p):
 
@@ -205,7 +206,7 @@ class Explainer(BaseEstimator):
     
                         pbar.update(ix2)
                 
-                if type_ci=="gaussian":                
+                if type_ci == "gaussian":                
                     
                     for ix2 in range(p):
 
@@ -250,7 +251,7 @@ class Explainer(BaseEstimator):
             # confidence intervals
             if method == "ci":
                 
-                if type_ci=="jackknife": 
+                if type_ci == "jackknife": 
                                         
                     self.ci_ = numerical_gradient_jackknife(
                     self.obj.predict,
@@ -261,7 +262,7 @@ class Explainer(BaseEstimator):
                 )
                     
                 
-                if type_ci=="gaussian": 
+                if type_ci == "gaussian": 
                     
                     self.ci_ = numerical_gradient_gaussian(
                     self.obj.predict,
@@ -269,59 +270,92 @@ class Explainer(BaseEstimator):
                     normalize=self.normalize,
                     n_jobs=self.n_jobs,
                     level=level,
-                )
+                )                
 
+            # # interactions
+            # if method == "inters":
+
+            #     assert col_inters is not None, "`col_inters` must be provided"
+
+            #     self.col_inters = col_inters
+
+            #     ix1 = np.where(np.asarray(X_names) == col_inters)[0][0]
+
+            #     if self.n_jobs is None:                     
+
+            #         pbar = Progbar(p)
+                    
+            #         if type_ci=="jackknife": 
+                        
+            #             for ix2 in range(p):
+        
+            #                 self.ci_inters_.update(
+            #                     {
+            #                         X_names[ix2]: numerical_interactions_jackknife(
+            #                             f=self.obj.predict,
+            #                             X=X,
+            #                             ix1=ix1,
+            #                             ix2=ix2,
+            #                             verbose=0,
+            #                         )
+            #                     }
+            #                 )
+                    
+            #         if type_ci == "gaussian": 
+                        
+            #             for ix2 in range(p):
+        
+            #                 self.ci_inters_.update(
+            #                     {
+            #                         X_names[ix2]: numerical_interactions_gaussian(
+            #                             f=self.obj.predict,
+            #                             X=X,
+            #                             ix1=ix1,
+            #                             ix2=ix2,
+            #                             verbose=0,
+            #                         )
+            #                     }
+            #                 )                                        
+
+            #             pbar.update(ix2)
+
+            #         pbar.update(p)
+            #         print("\n")
                 
+            #     # else self.n_jobs is not None
+            #     def foo_jackknife(ix):
+            #         return self.ci_inters_.update(
+            #                     {
+            #                         X_names[ix]: numerical_interactions_jackknife(
+            #                             f=self.obj.predict,
+            #                             X=X,
+            #                             ix1=ix1, 
+            #                             ix2=ix,
+            #                             verbose=0,
+            #                         )
+            #                     }
+            #                 )
 
-            # interactions
-            if method == "inters":
+            #     def foo_gaussian(ix):
+            #         return self.ci_inters_.update(
+            #                     {
+            #                         X_names[ix]: numerical_interactions_gaussian(
+            #                             f=self.obj.predict,
+            #                             X=X,
+            #                             ix1=ix1, 
+            #                             ix2=ix,
+            #                             verbose=0,
+            #                         )
+            #                     }
+            #                 )
 
-                assert col_inters is not None, "`col_inters` must be provided"
+            #     if type_ci == "jackknife": 
+            #         res = Parallel(n_jobs=self.n_jobs)(delayed(foo_jackknife)(ix2) for ix2 in tqdm(range(p)))
 
-                self.col_inters = col_inters
+            #     if type_ci == "gaussian":
+            #         res = Parallel(n_jobs=self.n_jobs)(delayed(foo_gaussian)(ix2) for ix2 in tqdm(range(p)))
 
-                ix1 = np.where(X_names == col_inters)[0][0]
-
-                pbar = Progbar(p)
-                
-                if type_ci=="jackknife": 
-                    
-                    for ix2 in range(p):
-    
-                        self.ci_inters_.update(
-                            {
-                                X_names[ix2]: numerical_interactions_jackknife(
-                                    f=self.obj.predict,
-                                    X=X,
-                                    ix1=ix1,
-                                    ix2=ix2,
-                                    verbose=0,
-                                )
-                            }
-                        )
-                
-                if type_ci=="gaussian": 
-                    
-                    for ix2 in range(p):
-    
-                        self.ci_inters_.update(
-                            {
-                                X_names[ix2]: numerical_interactions_gaussian(
-                                    f=self.obj.predict,
-                                    X=X,
-                                    ix1=ix1,
-                                    ix2=ix2,
-                                    verbose=0,
-                                )
-                            }
-                        )
-                    
-                    
-
-                    pbar.update(ix2)
-
-                pbar.update(p)
-                print("\n")
+            #     print(f" res: {res} ")
 
             self.y_mean_ = np.mean(y)
             ss_tot = np.sum((y - self.y_mean_) ** 2)
@@ -381,10 +415,6 @@ class Explainer(BaseEstimator):
 
         if (self.ci_ is not None) & (self.method == "ci"):
 
-            # (mean_est, se_est,
-            # mean_est + qt*se_est, mean_est - qt*se_est,
-            # p_values, signif_codes)
-
             df_mean = pd.Series(data=self.ci_[0], index=self.X_names)
             df_se = pd.Series(data=self.ci_[1], index=self.X_names)
             df_ubound = pd.Series(data=self.ci_[2], index=self.X_names)
@@ -443,7 +473,6 @@ class Explainer(BaseEstimator):
             )
 
             if self.type_fit == "regression":
-
                 print("\n")
                 print(
                     f"Multiple R-squared:  {np.round(self.r_squared_, 3)},	Adjusted R-squared:  {np.round(self.adj_r_squared_, 3)}"
@@ -459,6 +488,7 @@ class Explainer(BaseEstimator):
             print("\n")
 
         if (self.ci_inters_ is not None) & (self.method == "inters"):
+            raise NotImplementedError("This one's a bit tricky, I'm working on it")
             print("\n")
             print("Interactions with " + self.col_inters + ": ")
             with pd.option_context(

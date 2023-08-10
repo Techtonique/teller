@@ -28,7 +28,6 @@ def get_code_pval(pval):
         return "-"
 
 
-@memoize
 def numerical_gradient_jackknife(
     f, X, normalize=False, level=95, h=None, n_jobs=None
 ):

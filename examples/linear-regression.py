@@ -1,24 +1,15 @@
-import numpy as np
-from os import chdir
-
-#wd="/Users/moudiki/Documents/Python_Packages/teller"
-#
-#chdir(wd)
-
-import teller as tr
-import pandas as pd
-
-from sklearn import datasets, linear_model
 import numpy as np      
+import teller as tr
+from sklearn import datasets, linear_model
 from sklearn import datasets
 from sklearn.model_selection import train_test_split
 
 
 # import data
-boston = datasets.load_boston()
-X = np.delete(boston.data, 11, 1)
-y = boston.target
-col_names = np.append(np.delete(boston.feature_names, 11), 'MEDV')
+diabetes = datasets.load_diabetes()
+X = diabetes.data
+y = diabetes.target
+col_names = diabetes.feature_names
 
 
 # split  data into training and testing sets 
@@ -36,14 +27,14 @@ print(regr.coef_)
 
 
 # creating the explainer
-expr = tr.Explainer(obj=regr)
+expr = tr.Explainer(obj=regr, n_jobs=-1)
 
 
 # print(expr.get_params())
 
 
 # fitting the explainer
-expr.fit(X_test, y_test, X_names=col_names[:-1])
+expr.fit(X_test, y_test, X_names=col_names)
 
 
 # heterogeneity of effects

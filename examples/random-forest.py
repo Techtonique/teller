@@ -1,26 +1,15 @@
-import numpy as np
-from os import chdir
-
-#wd="/Users/moudiki/Documents/Python_Packages/teller"
-#
-#chdir(wd)
-
 import teller as tr
-import pandas as pd
-
 from sklearn import datasets
-import numpy as np      
 from sklearn import datasets
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.model_selection import train_test_split
 
 
 # import data
-boston = datasets.load_boston()
-X = np.delete(boston.data, 11, 1)
-y = boston.target
-col_names = np.append(np.delete(boston.feature_names, 11), 'MEDV')
-
+diabetes = datasets.load_diabetes()
+X = diabetes.data
+y = diabetes.target
+col_names = diabetes.feature_names
 
 # split  data into training and testing sets 
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, 
@@ -28,40 +17,36 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2,
 print(X_train.shape)
 print(X_test.shape)
 
-
 # fit a linear regression model 
 regr = RandomForestRegressor(n_estimators=1000, random_state=123)
 regr.fit(X_train, y_train)
 
-
 # creating the explainer
-expr = tr.Explainer(obj=regr)
-
-
-# print(expr.get_params())
-
+expr = tr.Explainer(obj=regr, n_jobs = -1)
 
 # heterogeneity of effects -----
 # fitting the explainer
-expr.fit(X_test, y_test, X_names=col_names[:-1], 
-          method="avg")
+expr.fit(X_test, y_test, X_names=col_names, 
+          method="avg", type_ci="gaussian")
 print(expr.summary())
 
 
 # confidence int. and tests on effects -----
-expr.fit(X_test, y_test, X_names=col_names[:-1], 
-         method="ci")
+expr.fit(X_test, y_test, X_names=col_names, 
+         method="ci", type_ci="gaussian")
 print(expr.summary())
 
 
-# interactions -----
-varx = "RAD"
-expr.fit(X_test, y_test, X_names=col_names[:-1],         
-         col_inters = varx, method="inters")
-print(expr.summary())
+# BROKEN for now
+# # interactions -----
+
+# varx = "bmi"
+# expr.fit(X_test, y_test, X_names=col_names,         
+#          col_inters = varx, method="inters")
+# print(expr.summary())
 
 
-varx = "RM"
-expr.fit(X_test, y_test, X_names=col_names[:-1], 
-         col_inters = varx, method="inters")
-print(expr.summary())
+# varx = "age"
+# expr.fit(X_test, y_test, X_names=col_names, 
+#          col_inters = varx, method="inters")
+# print(expr.summary())

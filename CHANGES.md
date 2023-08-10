@@ -1,3 +1,9 @@
+# version 0.9.0
+
+- remove memoizing for now (a lot of side effects)
+- remove Boston Housing dataset from `examples/`
+- remove interactions for now (veeery slow)
+
 # version 0.7.0
 
 - Add median to summary for method == "avg"

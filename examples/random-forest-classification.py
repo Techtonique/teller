@@ -3,7 +3,7 @@ import pandas as pd
 import teller as tr
 import numpy as np
 from sklearn import datasets
-from sklearn.ensemble import RandomForestClassifier, ExtraTreesClassifier
+from sklearn.ensemble import ExtraTreesClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.datasets import load_breast_cancer, load_wine, load_iris, make_classification
 

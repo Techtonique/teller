@@ -27,7 +27,6 @@ def get_code_pval(pval):
         return "-"
 
 
-@memoize
 def numerical_interactions_jackknife(
     f, X, ix1, ix2, level=95, h=None, n_jobs=None, verbose=1
 ):

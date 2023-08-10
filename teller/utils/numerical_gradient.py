@@ -8,7 +8,6 @@ from numpy.linalg import norm
 from sklearn.preprocessing import MinMaxScaler
 
 
-@memoize
 def numerical_gradient(f, X, normalize=False, h=None, n_jobs=None, verbose=1):
 
     n, p = X.shape
@@ -135,7 +134,6 @@ def numerical_gradient(f, X, normalize=False, h=None, n_jobs=None, verbose=1):
     return grad
 
 
-@memoize
 def numerical_interactions(f, X, ix1, ix2, h=None, k=None):
 
     n, p = X.shape

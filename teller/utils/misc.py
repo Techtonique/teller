@@ -29,7 +29,6 @@ def merge_two_dicts(x, y):
 
 
 # check if x is int
-@memoize
 def is_int(x):
     try:
         return int(x) == x
@@ -38,13 +37,11 @@ def is_int(x):
 
 
 # check if x is float
-@memoize
 def is_float(x):
     return isinstance(x, float)
 
 
 # check if the response contains only integers
-@memoize
 def is_factor(y):
 
     n = len(y)
