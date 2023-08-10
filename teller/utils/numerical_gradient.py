@@ -38,7 +38,7 @@ def numerical_gradient(f, X, normalize=False, h=None, n_jobs=None, verbose=1):
 
                 X[:, ix] = value_x  # restore (!)
 
-                grad[:, ix] = (fx_plus - fx_minus) / double_h
+                grad[:, ix] = (np.asarray(fx_plus) - np.asarray(fx_minus)) / double_h
 
                 pbar.update(ix)
 
@@ -75,7 +75,7 @@ def numerical_gradient(f, X, normalize=False, h=None, n_jobs=None, verbose=1):
 
             X[:, ix] = value_x  # restore (!)
 
-            grad[:, ix] = (fx_plus - fx_minus) / (2 * h)
+            grad[:, ix] = (np.asarray(fx_plus) - np.asarray(fx_minus)) / (2 * h)
 
             if verbose == 1:
                 pbar.update(ix)
@@ -107,7 +107,7 @@ def numerical_gradient(f, X, normalize=False, h=None, n_jobs=None, verbose=1):
 
         X[:, ix] = value_x  # restore (!)
 
-        grad[:, ix] = (fx_plus - fx_minus) / (2 * h)
+        grad[:, ix] = (np.asarray(fx_plus) - np.asarray(fx_minus)) / (2 * h)
 
     if verbose == 1:
         print("\n")
