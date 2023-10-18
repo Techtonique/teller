@@ -2,7 +2,7 @@
 
 <hr>  
 
-![PyPI](https://img.shields.io/pypi/v/the-teller) [![PyPI - License](https://img.shields.io/pypi/l/the-teller)](https://github.com/thierrymoudiki/teller/blob/master/LICENSE) [![Downloads](https://pepy.tech/badge/the-teller)](https://pepy.tech/project/the-teller) [![Documentation](https://img.shields.io/badge/documentation-is_here-green)](https://techtonique.github.io/teller/)
+![PyPI](https://img.shields.io/pypi/v/the-teller) [![PyPI - License](https://img.shields.io/pypi/l/the-teller)](https://github.com/thierrymoudiki/teller/blob/master/LICENSE) [![Downloads](https://pepy.tech/badge/the-teller)](https://pepy.tech/project/the-teller)   [![HitCount](https://hits.dwyl.com/Techtonique/teller.svg?style=flat-square)](http://hits.dwyl.com/Techtonique/teller) [![Documentation](https://img.shields.io/badge/documentation-is_here-green)](https://techtonique.github.io/teller/)
 
 
 
