@@ -1,9 +1,11 @@
+import os 
 import teller as tr
 from sklearn import datasets
 from sklearn import datasets
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.model_selection import train_test_split
 
+print(f"\n ----- Running: {os.path.basename(__file__)}... ----- \n")
 
 # import data
 diabetes = datasets.load_diabetes()
@@ -40,10 +42,10 @@ print(expr.summary())
 # BROKEN for now
 # # interactions -----
 
-# varx = "bmi"
-# expr.fit(X_test, y_test, X_names=col_names,         
+#varx = "bmi"
+#expr.fit(X_test, y_test, X_names=col_names,         
 #          col_inters = varx, method="inters")
-# print(expr.summary())
+#print(expr.summary())
 
 
 # varx = "age"

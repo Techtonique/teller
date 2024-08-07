@@ -1,4 +1,5 @@
 import numpy as np
+import pandas as pd
 from .memoize import memoize
 from .progress_bar import Progbar
 from joblib import Parallel, delayed
@@ -31,6 +32,9 @@ def get_code_pval(pval):
 def numerical_gradient_jackknife(
     f, X, normalize=False, level=95, h=None, n_jobs=None
 ):
+
+    if isinstance(X, pd.DataFrame):
+        X = X.values
 
     n, p = X.shape
     mean_grads = []
@@ -84,6 +88,8 @@ def numerical_gradient_jackknife(
 
     # if n_jobs is not None:
     def gradient_column(i):
+        if isinstance(X, pd.DataFrame):
+            X = X.values
         X_i = np.delete(X, i, 0)
         grad_i = numerical_gradient(f, X_i, normalize, verbose=0)
         mean_grads.append(np.mean(grad_i, axis=0))

@@ -1,4 +1,5 @@
 import numpy as np
+import pandas as pd
 from .memoize import memoize
 from .progress_bar import Progbar
 from joblib import Parallel, delayed
@@ -32,6 +33,9 @@ def numerical_interactions_gaussian(
     f, X, ix1, ix2, level=95, h=None, n_jobs=None, verbose=1
 ):
 
+    if isinstance(X, pd.DataFrame):
+        X = X.values
+
     n, p = X.shape
     mean_grads = []
     rv = norm()
@@ -46,8 +50,8 @@ def numerical_interactions_gaussian(
         for i in range(n):
 
             np.random.seed(i)
-            
-            X_i = X + rv.rvs()*0.01
+
+            X_i = X + rv.rvs() * 0.01
 
             inters_i = numerical_interactions(f, X_i, ix1, ix2)
 
@@ -90,8 +94,8 @@ def numerical_interactions_gaussian(
 
     # if n_jobs is not None:
     def interactions_column(i):
-        np.random.seed(i)            
-        X_i = X + rv.rvs()*0.01
+        np.random.seed(i)
+        X_i = X + rv.rvs() * 0.01
         inters_i = numerical_interactions(f, X_i, ix1, ix2)
         mean_grads.append(np.mean(inters_i))
 

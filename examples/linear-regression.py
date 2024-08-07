@@ -1,9 +1,11 @@
+import os 
 import numpy as np      
 import teller as tr
 from sklearn import datasets, linear_model
 from sklearn import datasets
 from sklearn.model_selection import train_test_split
 
+print(f"\n ----- Running: {os.path.basename(__file__)}... ----- \n")
 
 # import data
 diabetes = datasets.load_diabetes()

@@ -62,14 +62,19 @@ coverage: ## check code coverage quickly with the default Python
 	coverage html
 	$(BROWSER) htmlcov/index.html
 
-docs: ## generate mkdocs
-	 rm -rf docs/sources
-	 make install	 
-	 python3 docs/autogen.py	 
+docs: install ## generate docs		
+	pip install black pdoc 
+	black teller/* --line-length=80	
+	find teller/ -name "*.py" -exec autopep8 --max-line-length=80 --in-place {} +
+	pdoc -t docs teller/* --output-dir teller-docs
+	find . -name '__pycache__' -exec rm -fr {} +
 
-servedocs: docs ## compile the docs watching for changes
-	cd docs&&mkdocs serve
-	cd ..
+servedocs: install ## compile the docs watching for change	 	
+	pip install black pdoc 
+	black teller/* --line-length=80	
+	find teller/ -name "*.py" -exec autopep8 --max-line-length=80 --in-place {} +
+	pdoc -t docs teller/* 
+	find . -name '__pycache__' -exec rm -fr {} +
 
 release: dist ## package and upload a release
 	twine upload dist/*
@@ -80,10 +85,12 @@ dist: clean ## builds source and wheel package
 	ls -l dist
 
 install: clean ## install the package to the active Python's site-packages
-	python -m pip install .
+	python3 -m pip install .
 
-build-site: docs ## create website with mkdocs
-	cd docs&&mkdocs build
-	cp -rf docs/site/* ../../Pro_Website/Techtonique.github.io/teller/
-	cd ..
+run-examples: ## run all examples with one command
+	find examples -maxdepth 2 -name "*.py" -exec  python3 {} \;
+
+build-site: docs ## export mkdocs website to a folder		
+	cp -rf teller-docs/* ../../Pro_Website/Techtonique.github.io/teller
+	find . -name '__pycache__' -exec rm -fr {} +
 

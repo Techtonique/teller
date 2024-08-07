@@ -1,4 +1,5 @@
 import numpy as np
+import pandas as pd
 from .deepcopy import deepcopy
 from .memoize import memoize
 from .progress_bar import Progbar
@@ -9,6 +10,9 @@ from sklearn.preprocessing import MinMaxScaler
 
 
 def numerical_gradient(f, X, normalize=False, h=None, n_jobs=None, verbose=1):
+
+    if isinstance(X, pd.DataFrame):
+        X = X.values
 
     n, p = X.shape
     grad = np.zeros_like(X)
@@ -38,7 +42,9 @@ def numerical_gradient(f, X, normalize=False, h=None, n_jobs=None, verbose=1):
 
                 X[:, ix] = value_x  # restore (!)
 
-                grad[:, ix] = (np.asarray(fx_plus) - np.asarray(fx_minus)) / double_h
+                grad[:, ix] = (
+                    np.asarray(fx_plus) - np.asarray(fx_minus)
+                ) / double_h
 
                 pbar.update(ix)
 
@@ -135,6 +141,9 @@ def numerical_gradient(f, X, normalize=False, h=None, n_jobs=None, verbose=1):
 
 
 def numerical_interactions(f, X, ix1, ix2, h=None, k=None):
+
+    if isinstance(X, pd.DataFrame):
+        X = X.values
 
     n, p = X.shape
 

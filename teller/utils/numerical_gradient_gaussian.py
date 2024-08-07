@@ -44,10 +44,10 @@ def numerical_gradient_gaussian(
         pbar = Progbar(n)
 
         for i in range(n):
-            
+
             np.random.seed(i)
-            
-            X_i = X + rv.rvs()*0.01
+
+            X_i = X + rv.rvs() * 0.01
 
             grad_i = numerical_gradient(f, X_i, normalize, verbose=0)
 
@@ -88,8 +88,8 @@ def numerical_gradient_gaussian(
 
     # if n_jobs is not None:
     def gradient_column(i):
-        np.random.seed(i)            
-        X_i = X + rv.rvs()*0.01
+        np.random.seed(i)
+        X_i = X + rv.rvs() * 0.01
         grad_i = numerical_gradient(f, X_i, normalize, verbose=0)
         mean_grads.append(np.mean(grad_i, axis=0))
 

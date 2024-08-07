@@ -1,3 +1,4 @@
+import os 
 import math
 import pandas as pd
 import teller as tr
@@ -7,7 +8,7 @@ from sklearn.ensemble import ExtraTreesClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.datasets import load_breast_cancer, load_wine, load_iris, make_classification
 
-
+print(f"\n ----- Running: {os.path.basename(__file__)}... ----- \n")
 
 breast_cancer = load_breast_cancer()
 Z = breast_cancer.data

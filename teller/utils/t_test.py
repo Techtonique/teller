@@ -35,8 +35,8 @@ def t_test(x, y, alternative="less", var_equal=False, mu=0, conf_level=0.95):
     else:
         stderrx = math.sqrt(vx / nx)
         stderry = math.sqrt(vy / ny)
-        stderr = math.sqrt(stderrx ** 2 + stderry ** 2)
-        df = stderr ** 4 / (stderrx ** 4 / (nx - 1) + stderry ** 4 / (ny - 1))
+        stderr = math.sqrt(stderrx**2 + stderry**2)
+        df = stderr**4 / (stderrx**4 / (nx - 1) + stderry**4 / (ny - 1))
 
     if stderr < 10 * np.finfo(float).eps * max(math.fabs(mx), math.fabs(my)):
         raise ValueError("data are essentially constant")

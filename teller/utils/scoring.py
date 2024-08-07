@@ -10,7 +10,7 @@ import sklearn.metrics as skm
 
 
 def score_regression(obj, X, y, scoring=None, **kwargs):
-    """ Score the model on test set covariates X and response y. """
+    """Score the model on test set covariates X and response y."""
 
     preds = obj.predict(X)
 
@@ -50,7 +50,7 @@ def score_regression(obj, X, y, scoring=None, **kwargs):
 
 
 def score_classification(obj, X, y, scoring=None, **kwargs):
-    """ Score the model on test set covariates X and response y. """
+    """Score the model on test set covariates X and response y."""
 
     preds = obj.predict(X)
 

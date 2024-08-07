@@ -1,4 +1,5 @@
 import numpy as np
+import pandas as pd
 from .memoize import memoize
 from .progress_bar import Progbar
 from joblib import Parallel, delayed
@@ -30,6 +31,9 @@ def get_code_pval(pval):
 def numerical_interactions_jackknife(
     f, X, ix1, ix2, level=95, h=None, n_jobs=None, verbose=1
 ):
+
+    if isinstance(X, pd.DataFrame):
+        X = X.values
 
     n, p = X.shape
     mean_grads = []

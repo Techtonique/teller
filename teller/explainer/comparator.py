@@ -19,9 +19,9 @@ from ..utils import (
 
 class Comparator(BaseEstimator):
     """Class Comparator: Compare two models `obj1`, `obj2` ("estimators") based their predictions.
-        
-    Attributes: 
-       
+
+    Attributes:
+
         obj1: an object;
             fitted object containing methods `fit` and `predict`.
 
@@ -38,14 +38,14 @@ class Comparator(BaseEstimator):
 
     # summary of the object -----
     def summary(self):
-        """Summarise results of model comparison            
+        """Summarise results of model comparison
 
-        Args:  
+        Args:
 
-            None  
+            None
 
-        """        
-        
+        """
+
         assert (self.obj1.residuals_ is not None) & (
             self.obj2.residuals_ is not None
         ), "provided objects must be fitted first"
