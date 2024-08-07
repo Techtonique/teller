@@ -151,6 +151,7 @@ class Explainer(BaseEstimator):
                 return self.obj.predict_proba(x)[:, self.y_class]
 
             y_hat = predict_proba(X)
+            self.residuals_ = y - y_hat
 
             # heterogeneity of effects
             if method == "avg":
@@ -247,6 +248,7 @@ class Explainer(BaseEstimator):
             self.score_ = score_regression(self.obj, X, y, scoring=self.scoring)
 
             y_hat = self.obj.predict(X)
+            self.residuals_ = y - y_hat
 
             # heterogeneity of effects
             if method == "avg":
@@ -378,8 +380,7 @@ class Explainer(BaseEstimator):
             ss_tot = np.sum((y - self.y_mean_) ** 2)
             ss_reg = np.sum((y_hat - self.y_mean_) ** 2)
             ss_res = np.sum((y - y_hat) ** 2)
-
-            self.residuals_ = y - y_hat
+            
             self.r_squared_ = 1 - ss_res / ss_tot
             self.adj_r_squared_ = 1 - (1 - self.r_squared_) * (n - 1) / (
                 n - p - 1
@@ -530,6 +531,8 @@ class Explainer(BaseEstimator):
                         ],
                     ).transpose()
                 )
+                
+        return 
 
     def plot(self, what):
         """Plot average effects, heterogeneity of effects, ...
