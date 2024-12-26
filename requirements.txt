@@ -1,4 +1,5 @@
 joblib
+nnetsauce
 numpy
 pandas
 seaborn
