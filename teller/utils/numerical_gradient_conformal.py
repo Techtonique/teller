@@ -1,11 +1,142 @@
-import numpy as np
 import pandas as pd
-from joblib import Parallel, delayed
-from copy import deepcopy
-from tqdm import tqdm
+import numpy as np
+import matplotlib.pyplot as plt
+from collections import namedtuple 
+from scipy.stats import gaussian_kde, norm
+from scipy.interpolate import interp1d
+from sklearn.neighbors import KernelDensity
 
 
-def finite_difference_sensitivity(model, X, n_jobs=1, show_progress=False):
+def simulate_distribution(data, method="kde", num_samples=1000, **kwargs):
+    """
+    Simulate the distribution of an input vector using various methods.
+
+    Parameters:
+        data (array-like): Input vector of data.
+        method (str): Method for simulation:
+                      - 'bootstrap': Bootstrap resampling.
+                      - 'kde': Kernel Density Estimation.
+                      - 'normal': Normal distribution.
+                      - 'ecdf': Empirical CDF-based sampling.
+                      - 'permutation': Permutation resampling.
+                      - 'smooth-bootstrap': Smoothed bootstrap with added noise.
+        num_samples (int): Number of samples to generate.
+        kwargs: Additional parameters for specific methods:
+                - kde_bandwidth (str or float): Bandwidth for KDE ('scott', 'silverman', or float).
+                - dist (str): Parametric distribution type ('normal').
+                - noise_std (float): Noise standard deviation for smoothed bootstrap.
+
+    Returns:
+        np.ndarray: Simulated distribution samples.
+    """
+    assert method in [
+        "bootstrap",
+        "kde",
+        "parametric",
+        "ecdf",
+        "permutation",
+        "smooth-bootstrap",
+    ], f"Unknown method '{method}'. Choose from 'bootstrap', 'kde', 'parametric', 'ecdf', 'permutation', or 'smooth_bootstrap'."
+
+    data = np.array(data)
+    print(f"Input data shape: {data.shape}")
+
+    if method == "bootstrap":
+        simulated_data = np.random.choice(data, size=num_samples, replace=True)
+
+    elif method == "kde":
+        if len(data.shape) == 1:
+          kde_bandwidth = kwargs.get("kde_bandwidth", "scott")
+          kde = gaussian_kde(data, bw_method=kde_bandwidth)
+          simulated_data = kde.resample(num_samples).flatten()
+        else:
+          kde_bandwidth = kwargs.get("kde_bandwidth", "scott")
+          kde = KernelDensity(bandwidth=kde_bandwidth, kernel="gaussian")
+          kde.fit(data)
+          simulated_data = kde.sample(num_samples)
+
+    elif method == "normal":
+        mean, std = np.mean(data), np.std(data)
+        simulated_data = np.random.normal(mean, std, size=num_samples)
+
+    elif method == "ecdf":
+        data = np.sort(data)
+        ecdf_y = np.arange(1, len(data) + 1) / len(data)
+        inverse_cdf = interp1d(
+            ecdf_y, data, bounds_error=False, fill_value=(data[0], data[-1])
+        )
+        random_uniform = np.random.uniform(0, 1, size=num_samples)
+        simulated_data = inverse_cdf(random_uniform)
+
+    elif method == "permutation":
+        simulated_data = np.random.permutation(data)
+        while len(simulated_data) < num_samples:
+            simulated_data = np.concatenate(
+                [simulated_data, np.random.permutation(data)]
+            )
+        simulated_data = simulated_data[:num_samples]
+
+    elif method == "smooth_bootstrap":
+        noise_std = kwargs.get("noise_std", 0.1)
+        bootstrap_samples = np.random.choice(
+            data, size=num_samples, replace=True
+        )
+        noise = np.random.normal(0, noise_std, size=num_samples)
+        simulated_data = bootstrap_samples + noise
+
+    else:
+        raise ValueError(
+            f"Unknown method '{method}'. Choose from 'bootstrap', 'kde', 'parametric', 'ecdf', 'permutation', or 'smooth_bootstrap'."
+        )
+
+    return simulated_data
+
+
+def simulate_replications(
+    data, method="kde",
+    num_replications=10, **kwargs
+):
+    """
+    Create multiple replications of the input's distribution using a specified simulation method.
+
+    Parameters:
+        data (array-like): Input vector of data.
+        method (str): Method for simulation:
+                      - 'bootstrap': Bootstrap resampling.
+                      - 'kde': Kernel Density Estimation.
+                      - 'normal': Parametric distribution fitting.
+                      - 'ecdf': Empirical CDF-based sampling.
+                      - 'permutation': Permutation resampling.
+                      - 'smooth_bootstrap': Smoothed bootstrap with added noise.
+        num_samples (int): Number of samples in each replication.
+        num_replications (int): Number of replications to generate.
+        kwargs: Additional parameters for specific methods.
+
+    Returns:
+        pd.DataFrame: A DataFrame where each column represents a replication.
+    """
+    data = np.array(data)
+    print(f"Input data shape: {data.shape}")
+
+    num_samples = len(data)
+
+    replications = []
+
+    for _ in range(num_replications):
+        simulated_data = simulate_distribution(
+            data, method=method, num_samples=num_samples, **kwargs
+        )
+        replications.append(simulated_data)
+
+    # Combine replications into a DataFrame
+    replications_df = pd.DataFrame(replications).transpose()
+    replications_df.columns = [
+        f"Replication_{i+1}" for i in range(num_replications)
+    ]
+
+    return replications_df
+
+def finite_difference_sensitivity(model, X, class_index=None):
     """
     Compute the average sensitivities of the model's predictions with respect to each feature
     using second-order finite differences (central difference approximation) across multiple samples.
@@ -13,20 +144,13 @@ def finite_difference_sensitivity(model, X, n_jobs=1, show_progress=False):
     Parameters:
     - model: The trained model with a `predict` method.
     - X: A 2D array of input data points (multiple samples) to evaluate sensitivities.
-    - n_jobs: The number of jobs to run in parallel.
-    - show_progress: Whether to show a progress bar.
+    - class_index: Index of class to evaluate sensitivities for.
+
     Returns:
     - avg_sensitivities: An array of average sensitivities for each feature across the samples.
     """
     zero = 1e-4
     eps_factor = zero ** (1 / 3)
-
-    if isinstance(X, pd.DataFrame):
-        is_dataframe = True
-        X = X.values
-        feature_names = X.columns
-    else:
-        is_dataframe = False
 
     num_samples, num_features = X.shape
 
@@ -35,16 +159,9 @@ def finite_difference_sensitivity(model, X, n_jobs=1, show_progress=False):
     backward_predictions = np.zeros((num_samples, num_features))
     derivatives = np.zeros((num_samples, num_features))
 
-    if show_progress:
-        iterator = tqdm(range(num_features))
-    else:
-        iterator = range(num_features)
-
-    if n_jobs == 1:
-    
-        # Iterate through each sample to calculate forward and backward perturbations
-        for i in iterator:
-
+    # Iterate through each sample to calculate forward and backward perturbations
+    if class_index is None:
+        for i in range(num_features):
             inputs = X.copy()
             perturbed_inputs_forward = X.copy()
             perturbed_inputs_backward = X.copy()
@@ -59,10 +176,9 @@ def finite_difference_sensitivity(model, X, n_jobs=1, show_progress=False):
             forward_predictions[:, i] = model.predict(perturbed_inputs_forward)
             backward_predictions[:, i] = model.predict(perturbed_inputs_backward)
             derivatives[:, i] = (forward_predictions[:, i] - backward_predictions[:, i]) / double_h
-
     else:
-
-        def compute_derivative(i):
+        assert class_index <= model.n_classes, "class_index must be less than or equal to the number of classes"
+        for i in range(num_features):
             inputs = X.copy()
             perturbed_inputs_forward = X.copy()
             perturbed_inputs_backward = X.copy()
@@ -74,116 +190,72 @@ def finite_difference_sensitivity(model, X, n_jobs=1, show_progress=False):
             perturbed_inputs_backward[:, i] -= h
             # Make predictions for perturbed inputs
             double_h = 2 * h
-            forward_predictions[:, i] = model.predict(perturbed_inputs_forward)
-            backward_predictions[:, i] = model.predict(perturbed_inputs_backward)
-            return (forward_predictions[:, i] - backward_predictions[:, i]) / double_h
-        
-        # Use joblib to parallelize the computation
-        with Parallel(n_jobs=n_jobs) as parallel:
-            derivatives = parallel(delayed(compute_derivative)(i) for i in iterator)
-
-    if is_dataframe:
-        derivatives = pd.DataFrame(derivatives, columns=feature_names)
-    else:
-        derivatives = np.array(derivatives)
+            forward_predictions[:, i] = model.predict_proba(perturbed_inputs_forward)[:, class_index]
+            backward_predictions[:, i] = model.predict_proba(perturbed_inputs_backward)[:, class_index]
+            derivatives[:, i] = (forward_predictions[:, i] - backward_predictions[:, i]) / double_h
 
     return derivatives
 
-
-def finite_difference_interaction(model, X, ix, n_jobs=1, show_progress=False):
+def sensitivity_confidence_intervals(model, X_test,
+                                     confidence_level=0.95,
+                                     seed=123):
     """
-    Compute the interaction between the ix1-th and ix2-th features using finite differences.
+    Compute confidence intervals for the average sensitivities of the model's predictions with respect to each feature.
+
+    Parameters:
+    - model: The trained model with a `predict` method.
+    - X_test: A 2D array of input data points (multiple samples) to evaluate sensitivities.
+    - confidence_level: The desired confidence level for the confidence intervals.
+    - seed: The seed for the random number generator.
     """
-    n, p = X.shape
-    zero = np.finfo(float).eps
-    eps_factor = zero ** (1 / 4)
-    value_x = deepcopy(X[:, ix])
-    cond_x = np.abs(value_x) > zero
-    h = eps_factor * value_x * cond_x + 1e-4 * np.logical_not(cond_x)
 
-    if isinstance(X, pd.DataFrame):
-        is_dataframe = True
-        X = X.values
-        feature_names = X.columns
-    else:
-        is_dataframe = False
+    derivatives = finite_difference_sensitivity(model,
+                                                X_test)
+    np.random.seed(seed)
+    np.random.shuffle(derivatives)
 
-    if show_progress:
-        iterator = tqdm(range(p))
-    else:
-        iterator = range(p)
+    n_samples = derivatives.shape[0]
+    half_n_samples = n_samples // 2
+    derivatives_train = derivatives[:half_n_samples]
+    derivatives_cal = derivatives[half_n_samples:]
+    mean_derivatives_train = np.mean(derivatives_train, axis=0)
+    mean_derivatives_cal = np.mean(derivatives_cal, axis=0)
+    abs_residuals = np.abs(derivatives_cal - mean_derivatives_train[np.newaxis, :])
+    quantiles_abs_residuals = np.quantile(abs_residuals, (1 - confidence_level) / 2, axis=0)
+    mean_estimate = mean_derivatives_cal
+    median_estimate = np.median(derivatives_cal, axis=0)
+    lower_bounds = mean_derivatives_cal - quantiles_abs_residuals[np.newaxis, :]
+    upper_bounds = mean_derivatives_cal + quantiles_abs_residuals[np.newaxis, :]
 
-    if n_jobs == 1:
+    # Create a namedtuple to store the results
+    DescribeResult = namedtuple('DescribeResult', ['mean', 'median', 
+                                                   'lower', 'upper',
+                                                  'derivatives'])
+    DescribeResult.mean = mean_estimate.ravel()
+    DescribeResult.median = median_estimate.ravel()
+    DescribeResult.lower = lower_bounds.ravel()
+    DescribeResult.upper = upper_bounds.ravel()
+    DescribeResult.derivatives = derivatives
+    # Calculate p-values based on confidence intervals
+    p_values = np.zeros_like(mean_estimate)
+    for i in range(len(mean_estimate)):
+        # If 0 is not in the confidence interval, the effect is significant
+        if (lower_bounds[0][i] > 0) or (upper_bounds[0][i] < 0):
+            # Calculate p-value based on how far the interval is from 0
+            z_score = min(abs(lower_bounds[0][i]), abs(upper_bounds[0][i])) / (quantiles_abs_residuals[i])
+            p_values[i] = 2 * (1 - norm.cdf(z_score))  # Two-tailed test
+        else:
+            p_values[i] = 1.0  # Not significant if interval contains 0
+    
+    # Add significance codes based on p-values
+    signif_codes = np.array([''] * len(p_values), dtype=object)
+    signif_codes[p_values < 0.001] = '***'
+    signif_codes[(p_values >= 0.001) & (p_values < 0.01)] = '**'
+    signif_codes[(p_values >= 0.01) & (p_values < 0.05)] = '*'
+    signif_codes[(p_values >= 0.05) & (p_values < 0.1)] = '.'
+    signif_codes[p_values >= 0.1] = '-'
+    
+    DescribeResult.p_values = p_values
+    DescribeResult.signif_codes = signif_codes
 
-        perturbed_inputs_forward11 = X.copy()
-        perturbed_inputs_forward12 = X.copy()
-        perturbed_inputs_backward21 = X.copy()
-        perturbed_inputs_backward22 = X.copy()
-
-        perturbed_inputs_forward11[:, ix] = value_x + h
-        perturbed_inputs_forward12[:, ix] = value_x + h
-        perturbed_inputs_backward21[:, ix] = value_x - h
-        perturbed_inputs_backward22[:, ix] = value_x - h
-
-        for i in iterator:
-
-            if i != ix:
-
-                value_ix = deepcopy(X[:, i])
-                cond_ix = np.abs(value_ix) > zero
-                k = eps_factor * value_ix * cond_ix + 1e-4 * np.logical_not(cond_ix)
-
-                forward_forward_predictions = np.zeros((n, p))
-                forward_backward_predictions = np.zeros((n, p))
-                backward_forward_predictions = np.zeros((n, p))
-                backward_backward_predictions = np.zeros((n, p))  
-
-                derivatives = np.zeros((n, p))                              
-
-                perturbed_inputs_forward11[:, i] = value_ix + k
-                perturbed_inputs_forward12[:, i] = value_ix - k
-                perturbed_inputs_backward21[:, i] = value_ix + k
-                perturbed_inputs_backward22[:, i] = value_ix - k
-
-                forward_forward_predictions[:, i] = model.predict(perturbed_inputs_forward11)
-                forward_backward_predictions[:, i] = model.predict(perturbed_inputs_forward12)
-                backward_forward_predictions[:, i] = model.predict(perturbed_inputs_backward21)
-                backward_backward_predictions[:, i] = model.predict(perturbed_inputs_backward22)
-
-                derivatives[:, i] = (forward_forward_predictions[:, i] - forward_backward_predictions[:, i] - backward_forward_predictions[:, i] + backward_backward_predictions[:, i]) / (4 * k * h)
-
-    else:
-
-        def compute_derivative(i):
-            value_ix = deepcopy(X[:, i])
-            cond_ix = np.abs(value_ix) > zero
-            k = eps_factor * value_ix * cond_ix + 1e-4 * np.logical_not(cond_ix)
-
-            forward_forward_predictions = np.zeros((n, p))
-            forward_backward_predictions = np.zeros((n, p))
-            backward_forward_predictions = np.zeros((n, p))
-            backward_backward_predictions = np.zeros((n, p))  
-
-            derivatives = np.zeros((n, p))                              
-
-            perturbed_inputs_forward11[:, i] = value_ix + k
-            perturbed_inputs_forward12[:, i] = value_ix - k
-            perturbed_inputs_backward21[:, i] = value_ix + k
-            perturbed_inputs_backward22[:, i] = value_ix - k
-
-            forward_forward_predictions[:, i] = model.predict(perturbed_inputs_forward11)
-            forward_backward_predictions[:, i] = model.predict(perturbed_inputs_forward12)
-            backward_forward_predictions[:, i] = model.predict(perturbed_inputs_backward21)
-            backward_backward_predictions[:, i] = model.predict(perturbed_inputs_backward22)
-
-            derivatives[:, i] = (forward_forward_predictions[:, i] - forward_backward_predictions[:, i] - backward_forward_predictions[:, i] + backward_backward_predictions[:, i]) / (4 * k * h)
-        
-        with Parallel(n_jobs=n_jobs) as parallel:
-            derivatives = parallel(delayed(compute_derivative)(i) for i in iterator)
-
-    if is_dataframe:
-        derivatives = pd.DataFrame(derivatives, columns=feature_names)
-    else:
-        derivatives = np.array(derivatives)
-
-    return derivatives  
+    return DescribeResult
