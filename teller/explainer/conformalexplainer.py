@@ -114,16 +114,17 @@ class ConformalExplainer(BaseEstimator):
 
         # Create DataFrame with results
         results_df = pd.DataFrame({
-            'Estimate': self.summary_.mean,
+            'Mean Estimate': self.summary_.mean,
+            'Median Estimate': self.summary_.mean,
             'Lower Bound': self.summary_.lower,
             'Upper Bound': self.summary_.upper,
-            'P-value': self.summary_.p_values,
-            'Significance': self.summary_.signif_codes
+            'Signif. Codes': self.summary_.signif_codes,
+            'PI length': self.summary_.pi_length,
         }, index=self.X_names)
 
         # Sort by absolute value of estimate
         results_df = results_df.reindex(
-            results_df['Estimate'].abs().sort_values(ascending=False).index
+            results_df['Median Estimate'].abs().sort_values(ascending=False).index
         )
 
         # Format the output
@@ -132,8 +133,6 @@ class ConformalExplainer(BaseEstimator):
         print(f"\nModel type: {self.type_fit}")
         print("\nFeature Effects:")
         print(results_df.round(4))
-        print("\nSignificance codes:")
-        print("0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 '-' 1")
 
         # Don't return the DataFrame to avoid duplication
         return None
