@@ -39,6 +39,7 @@ class ConformalExplainer(BaseEstimator):
         self.n_jobs = n_jobs
         self.y_class = y_class
         self.summary_ = None 
+        self.col_inters = None 
 
     def fit(
         self,
@@ -50,7 +51,6 @@ class ConformalExplainer(BaseEstimator):
         """Fit the explainer's attribute `obj` to training data (X, y).
 
         Args:
-
             X: array-like, shape = [n_samples, n_features];
                 Training vectors, where n_samples is the number
                 of samples and n_features is the number of features.
@@ -59,10 +59,13 @@ class ConformalExplainer(BaseEstimator):
                 Column names (strings) for training vectors (default
                 is None, and not used if X is a data frame).
 
-            col_inters: str; Name of column for computing interactions.
+            level: confidence level for intervals (default: 95)
 
+            col_inters: str; Name of column for computing interactions.
         """
         n, p = X.shape
+
+        self.col_inters = col_inters
 
         if isinstance(X, pd.DataFrame):
             self.X_names = X.columns
@@ -78,20 +81,21 @@ class ConformalExplainer(BaseEstimator):
         if is_classifier:  # classification ---
             self.type_fit = "classification" 
             self.summary_ = sensitivity_confidence_intervals(
-                self.obj, 
-                X, 
-                class_index=self.y_class
+                model=self.obj, 
+                X_test=X,
+                confidence_level=level/100
             )
 
         else:  # regression ---
             self.type_fit = "regression"
             self.summary_ = sensitivity_confidence_intervals(
-                self.obj, 
-                X
+                model=self.obj, 
+                X_test=X,
+                confidence_level=level/100
             )
 
         # interactions
-        if col_inters is not None:
+        if self.col_inters is not None:
             raise NotImplementedError
 
         return self
