@@ -532,7 +532,7 @@ class Explainer(BaseEstimator):
                     ).transpose()
                 )
 
-        return
+        #return
 
     def plot(self, what):
         """Plot average effects, heterogeneity of effects, ...

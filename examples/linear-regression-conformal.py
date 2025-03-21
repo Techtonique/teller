@@ -1,10 +1,8 @@
 import os 
-import numpy as np      
 import teller as tr
-from sklearn import datasets, linear_model
 from sklearn import datasets
+from sklearn.linear_model import LinearRegression
 from sklearn.model_selection import train_test_split
-from teller.utils.numerical_gradient_conformal import finite_difference_interaction, finite_difference_sensitivity
 
 print(f"\n ----- Running: {os.path.basename(__file__)}... ----- \n")
 
@@ -14,19 +12,28 @@ X = diabetes.data
 y = diabetes.target
 col_names = diabetes.feature_names
 
-
 # split  data into training and testing sets 
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, 
                                                     random_state=123)
-print(X_train.shape)
-print(X_test.shape)
-
 
 # fit a linear regression model 
-regr = linear_model.LinearRegression()
+regr = LinearRegression()
 regr.fit(X_train, y_train)
-print(col_names)
-print(regr.coef_)
+print(f"columns: {col_names}")
+print(f"coefficients: {regr.coef_}")
 
-print(finite_difference_sensitivity(regr, X_test, 
-                                    n_jobs=1, show_progress=True))
+# creating the explainer
+expr = tr.ConformalExplainer(obj=regr)
+
+# heterogeneity of effects -----
+# fitting the explainer
+print("\n Conformal Explainer: -----------------")
+expr.fit(X_test, X_names=col_names)
+print(expr.summary())
+
+# Classical explainer 
+print("\n Classical Explainer: -----------------")
+expr = tr.Explainer(obj=regr)
+expr.fit(X_test, y=y_test, X_names=col_names)
+print(expr.summary())
+

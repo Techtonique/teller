@@ -25,6 +25,12 @@ expr = tr.ConformalExplainer(obj=regr)
 
 # heterogeneity of effects -----
 # fitting the explainer
+print("\n Conformal Explainer: -----------------")
 expr.fit(X_test, X_names=col_names)
 print(expr.summary())
 
+# Classical explainer 
+print("\n Classical Explainer: -----------------")
+expr = tr.Explainer(obj=regr)
+expr.fit(X_test, y=y_test, X_names=col_names)
+print(expr.summary())

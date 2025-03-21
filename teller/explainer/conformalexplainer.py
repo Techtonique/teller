@@ -116,15 +116,15 @@ class ConformalExplainer(BaseEstimator):
         results_df = pd.DataFrame({
             'Mean Estimate': self.summary_.mean,
             'Median Estimate': self.summary_.mean,
-            'Lower Bound': self.summary_.lower,
-            'Upper Bound': self.summary_.upper,
-            'Signif. Codes': self.summary_.signif_codes,
+            '.95 Lower Bound': self.summary_.lower,
+            '.95 Upper Bound': self.summary_.upper,
+            'Signif.': self.summary_.signif_codes,
             'PI length': self.summary_.pi_length,
         }, index=self.X_names)
 
         # Sort by absolute value of estimate
         results_df = results_df.reindex(
-            results_df['Median Estimate'].abs().sort_values(ascending=False).index
+            results_df['Mean Estimate'].sort_values(ascending=False).index
         )
 
         # Format the output
@@ -135,4 +135,4 @@ class ConformalExplainer(BaseEstimator):
         print(results_df.round(4))
 
         # Don't return the DataFrame to avoid duplication
-        return None
+        #return 
