@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 import seaborn as sns
+import matplotlib.pyplot as plt
 
 from joblib import Parallel, delayed
 from sklearn.base import BaseEstimator
@@ -135,4 +136,47 @@ class ConformalExplainer(BaseEstimator):
         print(results_df.round(4))
 
         # Don't return the DataFrame to avoid duplication
-        #return 
+        #return
+
+    def plot(self):
+        """Plot confidence intervals for each feature.
+
+        Args:
+            None
+        """
+        assert self.summary_ is not None, "Call method 'fit' before plotting"
+
+        # Create DataFrame with results
+        results_df = pd.DataFrame({
+            'Mean Estimate': self.summary_.mean,
+            '.95 Lower Bound': self.summary_.lower,
+            '.95 Upper Bound': self.summary_.upper,
+        }, index=self.X_names)
+
+        # Filter features with non-zero mean estimates
+        results_df = results_df[results_df['Mean Estimate'] != 0]
+
+        # Sort by mean estimate
+        results_df = results_df.sort_values(by="Mean Estimate", ascending=False)
+
+        # Plot confidence intervals
+        sns.set_theme(style="darkgrid")
+        plt.figure(figsize=(10, 6))
+        plt.errorbar(
+            x=results_df['Mean Estimate'],
+            y=results_df.index,
+            xerr=[
+                results_df['Mean Estimate'] - results_df['.95 Lower Bound'],
+                results_df['.95 Upper Bound'] - results_df['Mean Estimate']
+            ],
+            fmt='o',
+            capsize=5,
+            color='blue',
+            ecolor='gray',
+        )
+        plt.axvline(x=0, color='red', linestyle='--', linewidth=1)
+        plt.title("Confidence Intervals for Feature Effects")
+        plt.xlabel("Mean Estimate")
+        plt.ylabel("Features")
+        plt.tight_layout()
+        plt.show()

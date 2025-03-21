@@ -30,6 +30,7 @@ expr = tr.ConformalExplainer(obj=regr)
 print("\n Conformal Explainer: -----------------")
 expr.fit(X_test, X_names=col_names)
 print(expr.summary())
+expr.plot()
 
 # Classical explainer 
 print("\n Classical Explainer: -----------------")

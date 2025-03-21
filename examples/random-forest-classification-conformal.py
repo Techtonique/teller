@@ -43,10 +43,11 @@ print(expr1.summary())
 # creating the explainer
 expr1 = tr.ConformalExplainer(obj=clf1, y_class=1)
 
-
 # fitting the explainer (for heterogeneity of effects only)
 expr1.fit(X_test, X_names=dataset.feature_names) 
 
 # summary of results for the model
 print(expr1.summary())
+
+expr1.plot()
 

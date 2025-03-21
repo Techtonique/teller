@@ -566,7 +566,7 @@ class Explainer(BaseEstimator):
                 sorted_columns = list(effects.index.values)  # by mean
                 sorted_columns.reverse()
                 grads_df = grads_df.reindex(sorted_columns, axis=1)
-                sns.set(style="darkgrid")
+                sns.set_theme(style="darkgrid")
                 grads_df.boxplot(vert=False)
 
         # For method == "ci"
