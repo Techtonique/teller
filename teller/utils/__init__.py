@@ -2,6 +2,7 @@ from .deepcopy import deepcopy
 from .memoize import memoize
 from .misc import diff_list, merge_two_dicts, flatten, is_factor, tuple_insert
 from .numerical_gradient import numerical_gradient, numerical_interactions
+from .numerical_gradient_conformal import sensitivity_confidence_intervals
 from .numerical_gradient_jackknife import (
     numerical_gradient_jackknife,
     get_code_pval,

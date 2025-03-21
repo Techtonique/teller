@@ -380,7 +380,7 @@ class Explainer(BaseEstimator):
             ss_tot = np.sum((y - self.y_mean_) ** 2)
             ss_reg = np.sum((y_hat - self.y_mean_) ** 2)
             ss_res = np.sum((y - y_hat) ** 2)
-            
+
             self.r_squared_ = 1 - ss_res / ss_tot
             self.adj_r_squared_ = 1 - (1 - self.r_squared_) * (n - 1) / (
                 n - p - 1
@@ -531,8 +531,8 @@ class Explainer(BaseEstimator):
                         ],
                     ).transpose()
                 )
-                
-        return 
+
+        #return
 
     def plot(self, what):
         """Plot average effects, heterogeneity of effects, ...
@@ -545,14 +545,16 @@ class Explainer(BaseEstimator):
         assert self.effects_ is not None, "Call method 'fit' before plotting"
         assert self.grad_ is not None, "Call method 'fit' before plotting"
 
+        effects = self.effects_[self.effects_['mean'] != 0]
+
         # For method == "avg"
         if self.method == "avg":
 
             if what == "average_effects":
                 sns.set(style="darkgrid")
                 fi = pd.DataFrame()
-                fi["features"] = self.effects_.index.values
-                fi["effect"] = self.effects_["mean"].values
+                fi["features"] = effects.index.values
+                fi["effect"] = effects["mean"].values
                 sns.barplot(
                     x="effect",
                     y="features",
@@ -561,10 +563,10 @@ class Explainer(BaseEstimator):
 
             if what == "hetero_effects":
                 grads_df = pd.DataFrame(data=self.grad_, columns=self.X_names)
-                sorted_columns = list(self.effects_.index.values)  # by mean
+                sorted_columns = list(effects.index.values)  # by mean
                 sorted_columns.reverse()
                 grads_df = grads_df.reindex(sorted_columns, axis=1)
-                sns.set(style="darkgrid")
+                sns.set_theme(style="darkgrid")
                 grads_df.boxplot(vert=False)
 
         # For method == "ci"
