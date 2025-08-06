@@ -31,12 +31,16 @@ class PredictionInterval(BaseEstimator, RegressorMixin):
     """
 
     def __init__(self, obj, method="splitconformal", level=0.95, seed=123):
-
+        if not isinstance(level, (int, float)) or not 0 < level < 1:
+            raise ValueError("level must be a float between 0 and 1")
+        if method not in ["splitconformal", "localconformal"]:
+            raise ValueError("method must be either 'splitconformal' or 'localconformal'")
+            
         self.obj = obj
         self.method = method
         self.level = level
         self.seed = seed
-        self.quantile_ = None
+        self.quantile_ = 0.0  # Initialize with a default value
         self.icp_ = None
 
     def fit(self, X, y):
@@ -51,18 +55,27 @@ class PredictionInterval(BaseEstimator, RegressorMixin):
             y: array-like, shape = [n_samples, ]; Target values.
 
         """
-
+        if len(X) < 2:
+            raise ValueError("Need at least 2 samples for train/calibration split")
+            
         X_train, X_calibration, y_train, y_calibration = train_test_split(
             X, y, test_size=0.5, random_state=self.seed
         )
 
         if self.method == "splitconformal":
-
             n_samples_calibration = X_calibration.shape[0]
             q = self.level * (1 + 1 / n_samples_calibration)
+            
+            # Fit the base model
             self.obj.fit(X_train, y_train)
+            
+            # Get predictions on calibration set
             preds_calibration = self.obj.predict(X_calibration)
+            
+            # Calculate absolute residuals
             absolute_residuals = np.abs(y_calibration - preds_calibration)
+            
+            # Calculate quantile
             try:
                 # numpy version >= 1.22
                 self.quantile_ = np.quantile(
@@ -73,9 +86,11 @@ class PredictionInterval(BaseEstimator, RegressorMixin):
                 self.quantile_ = np.quantile(
                     a=absolute_residuals, q=q, interpolation="higher"
                 )
+                
+            if self.quantile_ is None or np.isnan(self.quantile_):
+                raise ValueError("Failed to calculate valid quantile")
 
-        if self.method == "localconformal":
-
+        elif self.method == "localconformal":
             mad_estimator = RandomForestRegressor()
             normalizer = RegressorNormalizer(
                 self.obj, mad_estimator, AbsErrorErrFunc()
@@ -104,28 +119,26 @@ class PredictionInterval(BaseEstimator, RegressorMixin):
                 bounds is returned.
 
         """
-
+        if not hasattr(self.obj, 'predict'):
+            raise ValueError("Base estimator must have a predict method")
+            
         pred = self.obj.predict(X)
 
         if self.method == "splitconformal":
-
+            if self.quantile_ is None:
+                raise ValueError("Model not fitted or quantile calculation failed")
+                
             if return_pi:
-
                 return pred, (pred - self.quantile_), (pred + self.quantile_)
+            return pred
 
-            else:
-
-                return pred
-
-        if self.method == "localconformal":
-
+        elif self.method == "localconformal":
+            if self.icp_ is None:
+                raise ValueError("Model not fitted or ICP not initialized")
+                
             if return_pi:
-
                 predictions_bounds = self.icp_.predict(
                     X, significance=1 - self.level
                 )
                 return pred, predictions_bounds[:, 0], predictions_bounds[:, 1]
-
-            else:
-
-                return pred
+            return pred
