@@ -221,7 +221,7 @@ def sensitivity_confidence_intervals(model, X_test,
     mean_derivatives_train = np.mean(derivatives_train, axis=0)
     mean_derivatives_cal = np.mean(derivatives_cal, axis=0)
     abs_residuals = np.abs(derivatives_cal - mean_derivatives_train[np.newaxis, :])
-    quantiles_abs_residuals = np.quantile(abs_residuals, (1 - confidence_level) / 2, axis=0)
+    quantiles_abs_residuals = np.quantile(abs_residuals, confidence_level, axis=0)
     mean_estimate = mean_derivatives_cal
     median_estimate = np.median(derivatives_cal, axis=0)
     lower_bounds = mean_derivatives_cal - quantiles_abs_residuals[np.newaxis, :]
@@ -230,32 +230,15 @@ def sensitivity_confidence_intervals(model, X_test,
     # Create a namedtuple to store the results
     DescribeResult = namedtuple('DescribeResult', ['mean', 'median', 
                                                    'lower', 'upper',
-                                                  'derivatives'])
+                                                  'derivatives', 
+                                                  'signif_codes', 
+                                                  'pi_length'])
     DescribeResult.mean = mean_estimate.ravel()
     DescribeResult.median = median_estimate.ravel()
     DescribeResult.lower = lower_bounds.ravel()
     DescribeResult.upper = upper_bounds.ravel()
     DescribeResult.derivatives = derivatives
-    # Calculate p-values based on confidence intervals
-    p_values = np.zeros_like(mean_estimate)
-    for i in range(len(mean_estimate)):
-        # If 0 is not in the confidence interval, the effect is significant
-        if (lower_bounds[0][i] > 0) or (upper_bounds[0][i] < 0):
-            # Calculate p-value based on how far the interval is from 0
-            z_score = min(abs(lower_bounds[0][i]), abs(upper_bounds[0][i])) / (quantiles_abs_residuals[i])
-            p_values[i] = 2 * (1 - norm.cdf(z_score))  # Two-tailed test
-        else:
-            p_values[i] = 1.0  # Not significant if interval contains 0
-    
-    # Add significance codes based on p-values
-    signif_codes = np.array([''] * len(p_values), dtype=object)
-    signif_codes[p_values < 0.001] = '***'
-    signif_codes[(p_values >= 0.001) & (p_values < 0.01)] = '**'
-    signif_codes[(p_values >= 0.01) & (p_values < 0.05)] = '*'
-    signif_codes[(p_values >= 0.05) & (p_values < 0.1)] = '.'
-    signif_codes[p_values >= 0.1] = '-'
-    
-    DescribeResult.p_values = p_values
-    DescribeResult.signif_codes = signif_codes
+    DescribeResult.signif_codes = (DescribeResult.lower*DescribeResult.upper > 0)
+    DescribeResult.pi_length = DescribeResult.upper - DescribeResult.lower
 
     return DescribeResult
