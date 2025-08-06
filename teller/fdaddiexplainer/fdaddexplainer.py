@@ -5,8 +5,9 @@ from tqdm.auto import tqdm
 from typing import Callable, Optional, Union, Dict, Tuple
 import warnings
 from copy import deepcopy
+from sklearn.base import BaseEstimator
 
-class FDAdditiveExplainer:
+class FDAdditiveExplainer(BaseEstimator):
     """
     Finite Difference SHAP-like Explainer with 1st/2nd order effects and numerical safeguards.
     

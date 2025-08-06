@@ -1,6 +1,6 @@
+import teller as tr 
 from sklearn.datasets import fetch_openml 
 from sklearn.ensemble import RandomForestRegressor 
-from teller import FDAdditiveExplainer
 from sklearn.model_selection import train_test_split
 
 X, y = fetch_openml("boston", as_frame=True, return_X_y=True)
@@ -13,7 +13,7 @@ rf = RandomForestRegressor(n_estimators=100, random_state=42)
 rf.fit(X_train, y_train)
 
 # Initialize explainer
-explainer = FDAdditiveExplainer(rf.predict)
+explainer = tr.FDAdditiveExplainer(rf.predict)
 
 # Basic explanation (1st-order only)
 basic_results = explainer.explain(X_test)
