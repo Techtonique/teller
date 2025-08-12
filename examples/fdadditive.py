@@ -17,6 +17,7 @@ explainer = tr.FDAdditiveExplainer(rf.predict)
 
 # Basic explanation (1st-order only)
 basic_results = explainer.explain(X_test)
+print(basic_results)
 
 # Visualize
 explainer.plot_attributions(basic_results["attributions"])
