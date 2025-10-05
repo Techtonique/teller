@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-from collections import namedtuple 
+from collections import namedtuple
 from scipy.stats import gaussian_kde, norm
 from scipy.interpolate import interp1d
 from sklearn.neighbors import KernelDensity
@@ -46,14 +46,14 @@ def simulate_distribution(data, method="kde", num_samples=1000, **kwargs):
 
     elif method == "kde":
         if len(data.shape) == 1:
-          kde_bandwidth = kwargs.get("kde_bandwidth", "scott")
-          kde = gaussian_kde(data, bw_method=kde_bandwidth)
-          simulated_data = kde.resample(num_samples).flatten()
+            kde_bandwidth = kwargs.get("kde_bandwidth", "scott")
+            kde = gaussian_kde(data, bw_method=kde_bandwidth)
+            simulated_data = kde.resample(num_samples).flatten()
         else:
-          kde_bandwidth = kwargs.get("kde_bandwidth", "scott")
-          kde = KernelDensity(bandwidth=kde_bandwidth, kernel="gaussian")
-          kde.fit(data)
-          simulated_data = kde.sample(num_samples)
+            kde_bandwidth = kwargs.get("kde_bandwidth", "scott")
+            kde = KernelDensity(bandwidth=kde_bandwidth, kernel="gaussian")
+            kde.fit(data)
+            simulated_data = kde.sample(num_samples)
 
     elif method == "normal":
         mean, std = np.mean(data), np.std(data)
@@ -92,10 +92,7 @@ def simulate_distribution(data, method="kde", num_samples=1000, **kwargs):
     return simulated_data
 
 
-def simulate_replications(
-    data, method="kde",
-    num_replications=10, **kwargs
-):
+def simulate_replications(data, method="kde", num_replications=10, **kwargs):
     """
     Create multiple replications of the input's distribution using a specified simulation method.
 
@@ -136,6 +133,7 @@ def simulate_replications(
 
     return replications_df
 
+
 def finite_difference_sensitivity(model, X, class_index=None):
     """
     Compute the average sensitivities of the model's predictions with respect to each feature
@@ -174,10 +172,16 @@ def finite_difference_sensitivity(model, X, class_index=None):
             # Make predictions for perturbed inputs
             double_h = 2 * h
             forward_predictions[:, i] = model.predict(perturbed_inputs_forward)
-            backward_predictions[:, i] = model.predict(perturbed_inputs_backward)
-            derivatives[:, i] = (forward_predictions[:, i] - backward_predictions[:, i]) / double_h
+            backward_predictions[:, i] = model.predict(
+                perturbed_inputs_backward
+            )
+            derivatives[:, i] = (
+                forward_predictions[:, i] - backward_predictions[:, i]
+            ) / double_h
     else:
-        assert class_index <= model.n_classes, "class_index must be less than or equal to the number of classes"
+        assert (
+            class_index <= model.n_classes
+        ), "class_index must be less than or equal to the number of classes"
         for i in range(num_features):
             inputs = X.copy()
             perturbed_inputs_forward = X.copy()
@@ -190,15 +194,22 @@ def finite_difference_sensitivity(model, X, class_index=None):
             perturbed_inputs_backward[:, i] -= h
             # Make predictions for perturbed inputs
             double_h = 2 * h
-            forward_predictions[:, i] = model.predict_proba(perturbed_inputs_forward)[:, class_index]
-            backward_predictions[:, i] = model.predict_proba(perturbed_inputs_backward)[:, class_index]
-            derivatives[:, i] = (forward_predictions[:, i] - backward_predictions[:, i]) / double_h
+            forward_predictions[:, i] = model.predict_proba(
+                perturbed_inputs_forward
+            )[:, class_index]
+            backward_predictions[:, i] = model.predict_proba(
+                perturbed_inputs_backward
+            )[:, class_index]
+            derivatives[:, i] = (
+                forward_predictions[:, i] - backward_predictions[:, i]
+            ) / double_h
 
     return derivatives
 
-def sensitivity_confidence_intervals(model, X_test,
-                                     confidence_level=0.95,
-                                     seed=123):
+
+def sensitivity_confidence_intervals(
+    model, X_test, confidence_level=0.95, seed=123
+):
     """
     Compute confidence intervals for the average sensitivities of the model's predictions with respect to each feature.
 
@@ -209,8 +220,7 @@ def sensitivity_confidence_intervals(model, X_test,
     - seed: The seed for the random number generator.
     """
 
-    derivatives = finite_difference_sensitivity(model,
-                                                X_test)
+    derivatives = finite_difference_sensitivity(model, X_test)
     np.random.seed(seed)
     np.random.shuffle(derivatives)
 
@@ -220,25 +230,38 @@ def sensitivity_confidence_intervals(model, X_test,
     derivatives_cal = derivatives[half_n_samples:]
     mean_derivatives_train = np.mean(derivatives_train, axis=0)
     mean_derivatives_cal = np.mean(derivatives_cal, axis=0)
-    abs_residuals = np.abs(derivatives_cal - mean_derivatives_train[np.newaxis, :])
-    quantiles_abs_residuals = np.quantile(abs_residuals, confidence_level, axis=0)
+    abs_residuals = np.abs(
+        derivatives_cal - mean_derivatives_train[np.newaxis, :]
+    )
+    quantiles_abs_residuals = np.quantile(
+        abs_residuals, confidence_level, axis=0
+    )
     mean_estimate = mean_derivatives_cal
     median_estimate = np.median(derivatives_cal, axis=0)
     lower_bounds = mean_derivatives_cal - quantiles_abs_residuals[np.newaxis, :]
     upper_bounds = mean_derivatives_cal + quantiles_abs_residuals[np.newaxis, :]
 
     # Create a namedtuple to store the results
-    DescribeResult = namedtuple('DescribeResult', ['mean', 'median', 
-                                                   'lower', 'upper',
-                                                  'derivatives', 
-                                                  'signif_codes', 
-                                                  'pi_length'])
+    DescribeResult = namedtuple(
+        "DescribeResult",
+        [
+            "mean",
+            "median",
+            "lower",
+            "upper",
+            "derivatives",
+            "signif_codes",
+            "pi_length",
+        ],
+    )
     DescribeResult.mean = mean_estimate.ravel()
     DescribeResult.median = median_estimate.ravel()
     DescribeResult.lower = lower_bounds.ravel()
     DescribeResult.upper = upper_bounds.ravel()
     DescribeResult.derivatives = derivatives
-    DescribeResult.signif_codes = (DescribeResult.lower*DescribeResult.upper > 0)
+    DescribeResult.signif_codes = (
+        DescribeResult.lower * DescribeResult.upper > 0
+    )
     DescribeResult.pi_length = DescribeResult.upper - DescribeResult.lower
 
     return DescribeResult

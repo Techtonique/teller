@@ -6,5 +6,11 @@ from .integratedgradients import IntegratedGradientsExplainer
 
 from .predictioninterval import PredictionInterval
 
-__all__ = ["Comparator", "Explainer", "ConformalExplainer", 
-"PredictionInterval", "FDAdditiveExplainer", "IntegratedGradientsExplainer"]
+__all__ = [
+    "Comparator",
+    "Explainer",
+    "ConformalExplainer",
+    "PredictionInterval",
+    "FDAdditiveExplainer",
+    "IntegratedGradientsExplainer",
+]

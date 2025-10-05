@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Model Explainer Dashboard</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8f9fa;
+            --bg-card: #ffffff;
+            --text-primary: #212529;
+            --text-secondary: #6c757d;
+            --border-color: #dee2e6;
+            --accent-color: #0d6efd;
+            --accent-hover: #0b5ed7;
+            --success: #198754;
+            --danger: #dc3545;
+            --warning: #ffc107;
+            --shadow: rgba(0, 0, 0, 0.1);
+        }
+        
+        body.dark-mode {
+            --bg-primary: #1a1a1a;
+            --bg-secondary: #2d2d2d;
+            --bg-card: #242424;
+            --text-primary: #e9ecef;
+            --text-secondary: #adb5bd;
+            --border-color: #404040;
+            --accent-color: #4dabf7;
+            --accent-hover: #339af0;
+            --success: #51cf66;
+            --danger: #ff6b6b;
+            --warning: #ffd43b;
+            --shadow: rgba(0, 0, 0, 0.3);
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            transition: background 0.3s, color 0.3s;
+            line-height: 1.6;
+        }
+        
+        .header {
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1.5rem 2rem;
+            box-shadow: 0 2px 4px var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        h1 {
+            font-size: 1.75rem;
+            font-weight: 600;
+        }
+        
+        .theme-toggle {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+        
+        .theme-toggle:hover {
+            background: var(--accent-color);
+            color: white;
+            border-color: var(--accent-color);
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .metric-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 8px var(--shadow);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .metric-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px var(--shadow);
+        }
+        
+        .metric-label {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.5rem;
+        }
+        
+        .metric-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+        
+        .chart-container {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 8px var(--shadow);
+        }
+        
+        .chart-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: var(--text-primary);
+        }
+        
+        .axis text {
+            fill: var(--text-primary);
+            font-size: 12px;
+        }
+        
+        .axis line, .axis path {
+            stroke: var(--border-color);
+        }
+        
+        .grid line {
+            stroke: var(--border-color);
+            stroke-opacity: 0.3;
+        }
+        
+        .tooltip {
+            position: absolute;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 0.75rem;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.2s;
+            box-shadow: 0 4px 12px var(--shadow);
+            font-size: 0.85rem;
+            z-index: 1000;
+        }
+        
+        .bar {
+            transition: opacity 0.2s;
+        }
+        
+        .bar:hover {
+            opacity: 0.8;
+        }
+        
+        @media (max-width: 768px) {
+            .header {
+                padding: 1rem;
+            }
+            
+            h1 {
+                font-size: 1.25rem;
+            }
+            
+            .container {
+                padding: 1rem;
+            }
+            
+            .metrics-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body class="">
+    <div class="header">
+        <div class="header-content">
+            <h1>Model Explainer Dashboard</h1>
+            <button class="theme-toggle" onclick="toggleTheme()">
+                🌓 Toggle Theme
+            </button>
+        </div>
+    </div>
+    
+    <div class="container">
+        
+                <div class="chart-container">
+                    <h2 class="chart-title">Feature Importance</h2>
+                    <div id="importance-chart"></div>
+                </div>
+            <div class="metrics-grid">
+                    <div class="metric-card">
+                        <div class="metric-label">ACCURACY</div>
+                        <div class="metric-value">1.0000</div>
+                    </div>
+                
+                    <div class="metric-card">
+                        <div class="metric-label">PRECISION</div>
+                        <div class="metric-value">1.0000</div>
+                    </div>
+                
+                    <div class="metric-card">
+                        <div class="metric-label">RECALL</div>
+                        <div class="metric-value">1.0000</div>
+                    </div>
+                
+                    <div class="metric-card">
+                        <div class="metric-label">F1</div>
+                        <div class="metric-value">1.0000</div>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <h2 class="chart-title">Prediction Distribution</h2>
+                    <div id="predictions-chart"></div>
+                </div>
+            
+                <div class="chart-container">
+                    <h2 class="chart-title">Confusion Matrix</h2>
+                    <div id="confusion-matrix-chart"></div>
+                </div>
+            
+    </div>
+    
+    <div class="tooltip"></div>
+    
+    <script>
+        const data = {
+            importance: [{"feature": "petal length (cm)", "importance": 0.25}, {"feature": "petal width (cm)", "importance": 0.21999999999999997}, {"feature": "sepal width (cm)", "importance": 0.0}, {"feature": "sepal length (cm)", "importance": 0.0}],
+            predictions: {"actual": [1, 0, 2, 1, 1, 0, 1, 2, 1, 1, 2, 0, 0, 0, 0, 1, 2, 1, 1, 2, 0, 2, 0, 2, 2, 2, 2, 2, 0, 0], "predicted": [1, 0, 2, 1, 1, 0, 1, 2, 1, 1, 2, 0, 0, 0, 0, 1, 2, 1, 1, 2, 0, 2, 0, 2, 2, 2, 2, 2, 0, 0]},
+            confusionMatrix: [[10, 0, 0], [0, 9, 0], [0, 0, 11]],
+            modelType: "classifier"
+        };
+        
+        function toggleTheme() {
+            document.body.classList.toggle('dark-mode');
+        }
+        
+        // Initialize charts
+        
+                // Feature Importance Chart
+                function createImportanceChart() {
+                    const container = d3.select('#importance-chart');
+                    const width = container.node().getBoundingClientRect().width;
+                    const height = 400;
+                    const margin = {top: 20, right: 30, bottom: 40, left: 150};
+                    
+                    const svg = container.append('svg')
+                        .attr('width', width)
+                        .attr('height', height);
+                    
+                    const chartWidth = width - margin.left - margin.right;
+                    const chartHeight = height - margin.top - margin.bottom;
+                    
+                    const g = svg.append('g')
+                        .attr('transform', `translate(${margin.left},${margin.top})`);
+                    
+                    const x = d3.scaleLinear()
+                        .domain([0, d3.max(data.importance, d => d.importance)])
+                        .range([0, chartWidth]);
+                    
+                    const y = d3.scaleBand()
+                        .domain(data.importance.map(d => d.feature))
+                        .range([0, chartHeight])
+                        .padding(0.2);
+                    
+                    // Grid
+                    g.append('g')
+                        .attr('class', 'grid')
+                        .call(d3.axisBottom(x).tickSize(chartHeight).tickFormat(''));
+                    
+                    // Bars with animation
+                    g.selectAll('.bar')
+                        .data(data.importance)
+                        .enter()
+                        .append('rect')
+                        .attr('class', 'bar')
+                        .attr('x', 0)
+                        .attr('y', d => y(d.feature))
+                        .attr('height', y.bandwidth())
+                        .attr('fill', '#4dabf7')
+                        .attr('width', 0)
+                        .on('mouseover', function(event, d) {
+                            const tooltip = d3.select('.tooltip');
+                            tooltip.style('opacity', 1)
+                                .html(`<strong>${d.feature}</strong><br/>Importance: ${d.importance.toFixed(4)}`);
+                        })
+                        .on('mousemove', function(event) {
+                            d3.select('.tooltip')
+                                .style('left', (event.pageX + 10) + 'px')
+                                .style('top', (event.pageY - 10) + 'px');
+                        })
+                        .on('mouseout', function() {
+                            d3.select('.tooltip').style('opacity', 0);
+                        })
+                        .transition()
+                        .duration(1000)
+                        .ease(d3.easeCubicOut)
+                        .attr('width', d => x(d.importance));
+                    
+                    // Axes
+                    g.append('g')
+                        .attr('class', 'axis')
+                        .attr('transform', `translate(0,${chartHeight})`)
+                        .call(d3.axisBottom(x));
+                    
+                    g.append('g')
+                        .attr('class', 'axis')
+                        .call(d3.axisLeft(y));
+                }
+                createImportanceChart();
+            
+
+                // Predictions Chart
+                function createPredictionsChart() {
+                    const container = d3.select('#predictions-chart');
+                    const width = container.node().getBoundingClientRect().width;
+                    const height = 400;
+                    const margin = {top: 20, right: 30, bottom: 50, left: 60};
+                    
+                    const svg = container.append('svg')
+                        .attr('width', width)
+                        .attr('height', height);
+                    
+                    const chartWidth = width - margin.left - margin.right;
+                    const chartHeight = height - margin.top - margin.bottom;
+                    
+                    const g = svg.append('g')
+                        .attr('transform', `translate(${margin.left},${margin.top})`);
+                    
+                    const dataPoints = data.predictions.actual.map((a, i) => ({
+                        actual: a,
+                        predicted: data.predictions.predicted[i],
+                        index: i
+                    }));
+                    
+                    const x = d3.scaleLinear()
+                        .domain([0, dataPoints.length - 1])
+                        .range([0, chartWidth]);
+                    
+                    const yExtent = d3.extent([...data.predictions.actual, ...data.predictions.predicted]);
+                    const y = d3.scaleLinear()
+                        .domain(yExtent)
+                        .range([chartHeight, 0]);
+                    
+                    // Grid
+                    g.append('g')
+                        .attr('class', 'grid')
+                        .call(d3.axisLeft(y).tickSize(-chartWidth).tickFormat(''));
+                    
+                    // Line for actual values
+                    const actualLine = d3.line()
+                        .x((d, i) => x(i))
+                        .y(d => y(d));
+                    
+                    const actualPath = g.append('path')
+                        .datum(data.predictions.actual)
+                        .attr('fill', 'none')
+                        .attr('stroke', '#51cf66')
+                        .attr('stroke-width', 2)
+                        .attr('d', actualLine);
+                    
+                    // Line for predicted values
+                    const predPath = g.append('path')
+                        .datum(data.predictions.predicted)
+                        .attr('fill', 'none')
+                        .attr('stroke', '#4dabf7')
+                        .attr('stroke-width', 2)
+                        .attr('d', actualLine);
+                    
+                    // Animate lines
+                    const totalLength = actualPath.node().getTotalLength();
+                    actualPath
+                        .attr('stroke-dasharray', totalLength)
+                        .attr('stroke-dashoffset', totalLength)
+                        .transition()
+                        .duration(1500)
+                        .ease(d3.easeCubicInOut)
+                        .attr('stroke-dashoffset', 0);
+                    
+                    predPath
+                        .attr('stroke-dasharray', totalLength)
+                        .attr('stroke-dashoffset', totalLength)
+                        .transition()
+                        .duration(1500)
+                        .ease(d3.easeCubicInOut)
+                        .attr('stroke-dashoffset', 0);
+                    
+                    // Axes
+                    g.append('g')
+                        .attr('class', 'axis')
+                        .attr('transform', `translate(0,${chartHeight})`)
+                        .call(d3.axisBottom(x));
+                    
+                    g.append('g')
+                        .attr('class', 'axis')
+                        .call(d3.axisLeft(y));
+                    
+                    // Legend
+                    const legend = svg.append('g')
+                        .attr('transform', `translate(${width - 150}, 20)`);
+                    
+                    legend.append('line')
+                        .attr('x1', 0).attr('x2', 30)
+                        .attr('y1', 0).attr('y2', 0)
+                        .attr('stroke', '#51cf66')
+                        .attr('stroke-width', 2);
+                    
+                    legend.append('text')
+                        .attr('x', 35).attr('y', 5)
+                        .style('fill', 'var(--text-primary)')
+                        .text('Actual');
+                    
+                    legend.append('line')
+                        .attr('x1', 0).attr('x2', 30)
+                        .attr('y1', 20).attr('y2', 20)
+                        .attr('stroke', '#4dabf7')
+                        .attr('stroke-width', 2);
+                    
+                    legend.append('text')
+                        .attr('x', 35).attr('y', 25)
+                        .style('fill', 'var(--text-primary)')
+                        .text('Predicted');
+                }
+                createPredictionsChart();
+            
+    </script>
+</body>
+</html>

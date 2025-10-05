@@ -532,7 +532,7 @@ class Explainer(BaseEstimator):
                     ).transpose()
                 )
 
-        #return
+        # return
 
     def plot(self, what):
         """Plot average effects, heterogeneity of effects, ...
@@ -545,7 +545,7 @@ class Explainer(BaseEstimator):
         assert self.effects_ is not None, "Call method 'fit' before plotting"
         assert self.grad_ is not None, "Call method 'fit' before plotting"
 
-        effects = self.effects_[self.effects_['mean'] != 0]
+        effects = self.effects_[self.effects_["mean"] != 0]
 
         # For method == "avg"
         if self.method == "avg":

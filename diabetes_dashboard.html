@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Model Explainer Dashboard</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8f9fa;
+            --bg-card: #ffffff;
+            --text-primary: #212529;
+            --text-secondary: #6c757d;
+            --border-color: #dee2e6;
+            --accent-color: #0d6efd;
+            --accent-hover: #0b5ed7;
+            --success: #198754;
+            --danger: #dc3545;
+            --warning: #ffc107;
+            --shadow: rgba(0, 0, 0, 0.1);
+        }
+        
+        body.dark-mode {
+            --bg-primary: #1a1a1a;
+            --bg-secondary: #2d2d2d;
+            --bg-card: #242424;
+            --text-primary: #e9ecef;
+            --text-secondary: #adb5bd;
+            --border-color: #404040;
+            --accent-color: #4dabf7;
+            --accent-hover: #339af0;
+            --success: #51cf66;
+            --danger: #ff6b6b;
+            --warning: #ffd43b;
+            --shadow: rgba(0, 0, 0, 0.3);
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            transition: background 0.3s, color 0.3s;
+            line-height: 1.6;
+        }
+        
+        .header {
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1.5rem 2rem;
+            box-shadow: 0 2px 4px var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        h1 {
+            font-size: 1.75rem;
+            font-weight: 600;
+        }
+        
+        .theme-toggle {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+        
+        .theme-toggle:hover {
+            background: var(--accent-color);
+            color: white;
+            border-color: var(--accent-color);
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .metric-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 8px var(--shadow);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .metric-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px var(--shadow);
+        }
+        
+        .metric-label {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.5rem;
+        }
+        
+        .metric-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+        
+        .chart-container {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 8px var(--shadow);
+        }
+        
+        .chart-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: var(--text-primary);
+        }
+        
+        .axis text {
+            fill: var(--text-primary);
+            font-size: 12px;
+        }
+        
+        .axis line, .axis path {
+            stroke: var(--border-color);
+        }
+        
+        .grid line {
+            stroke: var(--border-color);
+            stroke-opacity: 0.3;
+        }
+        
+        .tooltip {
+            position: absolute;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 0.75rem;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.2s;
+            box-shadow: 0 4px 12px var(--shadow);
+            font-size: 0.85rem;
+            z-index: 1000;
+        }
+        
+        .bar {
+            transition: opacity 0.2s;
+        }
+        
+        .bar:hover {
+            opacity: 0.8;
+        }
+        
+        @media (max-width: 768px) {
+            .header {
+                padding: 1rem;
+            }
+            
+            h1 {
+                font-size: 1.25rem;
+            }
+            
+            .container {
+                padding: 1rem;
+            }
+            
+            .metrics-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body class="dark-mode">
+    <div class="header">
+        <div class="header-content">
+            <h1>Model Explainer Dashboard</h1>
+            <button class="theme-toggle" onclick="toggleTheme()">
+                🌓 Toggle Theme
+            </button>
+        </div>
+    </div>
+    
+    <div class="container">
+        
+                <div class="chart-container">
+                    <h2 class="chart-title">Feature Importance</h2>
+                    <div id="importance-chart"></div>
+                </div>
+            <div class="metrics-grid">
+                    <div class="metric-card">
+                        <div class="metric-label">RMSE</div>
+                        <div class="metric-value">54.3324</div>
+                    </div>
+                
+                    <div class="metric-card">
+                        <div class="metric-label">MAE</div>
+                        <div class="metric-value">44.0530</div>
+                    </div>
+                
+                    <div class="metric-card">
+                        <div class="metric-label">R2</div>
+                        <div class="metric-value">0.4428</div>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <h2 class="chart-title">Predictions vs Actual</h2>
+                    <div id="predictions-chart"></div>
+                </div>
+            
+                <div class="chart-container">
+                    <h2 class="chart-title">Feature Statistics (Top 10)</h2>
+                    <div style="overflow-x: auto;"><table border="1" class="dataframe stats-table">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>count</th>
+      <th>mean</th>
+      <th>std</th>
+      <th>min</th>
+      <th>25%</th>
+      <th>50%</th>
+      <th>75%</th>
+      <th>max</th>
+      <th>missing</th>
+      <th>missing_pct</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>age</th>
+      <td>353.000</td>
+      <td>0.001</td>
+      <td>0.046</td>
+      <td>-0.107</td>
+      <td>-0.031</td>
+      <td>0.009</td>
+      <td>0.038</td>
+      <td>0.111</td>
+      <td>0</td>
+      <td>0.000</td>
+    </tr>
+    <tr>
+      <th>sex</th>
+      <td>353.000</td>
+      <td>0.000</td>
+      <td>0.048</td>
+      <td>-0.045</td>
+      <td>-0.045</td>
+      <td>-0.045</td>
+      <td>0.051</td>
+      <td>0.051</td>
+      <td>0</td>
+      <td>0.000</td>
+    </tr>
+    <tr>
+      <th>bmi</th>
+      <td>353.000</td>
+      <td>0.002</td>
+      <td>0.047</td>
+      <td>-0.089</td>
+      <td>-0.032</td>
+      <td>-0.005</td>
+      <td>0.033</td>
+      <td>0.161</td>
+      <td>0</td>
+      <td>0.000</td>
+    </tr>
+    <tr>
+      <th>bp</th>
+      <td>353.000</td>
+      <td>0.001</td>
+      <td>0.048</td>
+      <td>-0.112</td>
+      <td>-0.037</td>
+      <td>-0.006</td>
+      <td>0.036</td>
+      <td>0.132</td>
+      <td>0</td>
+      <td>0.000</td>
+    </tr>
+    <tr>
+      <th>s1</th>
+      <td>353.000</td>
+      <td>-0.001</td>
+      <td>0.048</td>
+      <td>-0.109</td>
+      <td>-0.036</td>
+      <td>-0.004</td>
+      <td>0.026</td>
+      <td>0.154</td>
+      <td>0</td>
+      <td>0.000</td>
+    </tr>
+    <tr>
+      <th>s2</th>
+      <td>353.000</td>
+      <td>-0.001</td>
+      <td>0.048</td>
+      <td>-0.116</td>
+      <td>-0.033</td>
+      <td>-0.004</td>
+      <td>0.027</td>
+      <td>0.199</td>
+      <td>0</td>
+      <td>0.000</td>
+    </tr>
+    <tr>
+      <th>s3</th>
+      <td>353.000</td>
+      <td>-0.001</td>
+      <td>0.047</td>
+      <td>-0.102</td>
+      <td>-0.032</td>
+      <td>-0.007</td>
+      <td>0.027</td>
+      <td>0.181</td>
+      <td>0</td>
+      <td>0.000</td>
+    </tr>
+    <tr>
+      <th>s4</th>
+      <td>353.000</td>
+      <td>0.000</td>
+      <td>0.048</td>
+      <td>-0.076</td>
+      <td>-0.039</td>
+      <td>-0.003</td>
+      <td>0.034</td>
+      <td>0.185</td>
+      <td>0</td>
+      <td>0.000</td>
+    </tr>
+    <tr>
+      <th>s5</th>
+      <td>353.000</td>
+      <td>0.001</td>
+      <td>0.048</td>
+      <td>-0.126</td>
+      <td>-0.033</td>
+      <td>-0.001</td>
+      <td>0.034</td>
+      <td>0.134</td>
+      <td>0</td>
+      <td>0.000</td>
+    </tr>
+    <tr>
+      <th>s6</th>
+      <td>353.000</td>
+      <td>0.002</td>
+      <td>0.048</td>
+      <td>-0.138</td>
+      <td>-0.030</td>
+      <td>0.003</td>
+      <td>0.032</td>
+      <td>0.136</td>
+      <td>0</td>
+      <td>0.000</td>
+    </tr>
+  </tbody>
+</table></div>
+                </div>
+            
+    </div>
+    
+    <div class="tooltip"></div>
+    
+    <script>
+        const data = {
+            importance: [{"feature": "s5", "importance": 0.2511692812077492}, {"feature": "bmi", "importance": 0.2240795140368569}, {"feature": "bp", "importance": 0.024449469642568677}, {"feature": "s6", "importance": 0.021204348963915674}, {"feature": "sex", "importance": 0.020923900114519445}, {"feature": "age", "importance": 0.007843530817796818}, {"feature": "s4", "importance": -0.0016456704760397956}, {"feature": "s2", "importance": -0.003064746032445731}, {"feature": "s1", "importance": -0.010535260591860296}, {"feature": "s3", "importance": -0.010630854538578927}],
+            predictions: {"actual": [219.0, 70.0, 202.0, 230.0, 111.0, 84.0, 242.0, 272.0, 94.0, 96.0, 94.0, 252.0, 99.0, 297.0, 135.0, 67.0, 295.0, 264.0, 170.0, 275.0, 310.0, 64.0, 128.0, 232.0, 129.0, 118.0, 263.0, 77.0, 48.0, 107.0, 140.0, 113.0, 90.0, 164.0, 180.0, 233.0, 42.0, 84.0, 172.0, 63.0, 48.0, 108.0, 156.0, 168.0, 90.0, 52.0, 200.0, 87.0, 90.0, 258.0, 136.0, 158.0, 69.0, 72.0, 171.0, 95.0, 72.0, 151.0, 168.0, 60.0, 122.0, 52.0, 187.0, 102.0, 214.0, 248.0, 181.0, 110.0, 140.0, 202.0, 101.0, 222.0, 281.0, 61.0, 89.0, 91.0, 186.0, 220.0, 237.0, 233.0, 68.0, 190.0, 96.0, 72.0, 153.0, 98.0, 37.0, 63.0, 184.0], "predicted": [144.0, 171.58, 150.72, 253.71, 107.19, 123.54, 239.09, 219.01, 153.44, 184.59, 103.27, 185.32, 91.89, 236.98, 85.59, 139.26, 241.74, 261.98, 167.06, 221.73, 156.63, 113.62, 75.13, 198.49, 139.9, 176.87, 194.25, 159.2, 73.15, 112.09, 166.87, 100.91, 182.62, 207.63, 159.57, 204.45, 104.14, 113.15, 176.29, 76.96, 76.73, 95.14, 168.26, 156.12, 167.28, 84.98, 74.32, 123.17, 76.75, 162.77, 104.82, 88.74, 178.42, 117.31, 189.34, 140.62, 102.41, 224.09, 92.63, 88.03, 157.84, 170.34, 141.44, 101.54, 132.92, 227.33, 183.72, 178.32, 145.88, 151.79, 185.02, 193.13, 211.46, 109.86, 80.11, 158.08, 211.58, 165.56, 186.47, 203.63, 96.42, 117.94, 81.38, 75.74, 84.91, 74.88, 91.54, 76.01, 158.64]},
+            confusionMatrix: null,
+            modelType: "regressor"
+        };
+        
+        function toggleTheme() {
+            document.body.classList.toggle('dark-mode');
+        }
+        
+        // Initialize charts
+        
+                // Feature Importance Chart
+                function createImportanceChart() {
+                    const container = d3.select('#importance-chart');
+                    const width = container.node().getBoundingClientRect().width;
+                    const height = 400;
+                    const margin = {top: 20, right: 30, bottom: 40, left: 150};
+                    
+                    const svg = container.append('svg')
+                        .attr('width', width)
+                        .attr('height', height);
+                    
+                    const chartWidth = width - margin.left - margin.right;
+                    const chartHeight = height - margin.top - margin.bottom;
+                    
+                    const g = svg.append('g')
+                        .attr('transform', `translate(${margin.left},${margin.top})`);
+                    
+                    const x = d3.scaleLinear()
+                        .domain([0, d3.max(data.importance, d => d.importance)])
+                        .range([0, chartWidth]);
+                    
+                    const y = d3.scaleBand()
+                        .domain(data.importance.map(d => d.feature))
+                        .range([0, chartHeight])
+                        .padding(0.2);
+                    
+                    // Grid
+                    g.append('g')
+                        .attr('class', 'grid')
+                        .call(d3.axisBottom(x).tickSize(chartHeight).tickFormat(''));
+                    
+                    // Bars with animation
+                    g.selectAll('.bar')
+                        .data(data.importance)
+                        .enter()
+                        .append('rect')
+                        .attr('class', 'bar')
+                        .attr('x', 0)
+                        .attr('y', d => y(d.feature))
+                        .attr('height', y.bandwidth())
+                        .attr('fill', '#4dabf7')
+                        .attr('width', 0)
+                        .on('mouseover', function(event, d) {
+                            const tooltip = d3.select('.tooltip');
+                            tooltip.style('opacity', 1)
+                                .html(`<strong>${d.feature}</strong><br/>Importance: ${d.importance.toFixed(4)}`);
+                        })
+                        .on('mousemove', function(event) {
+                            d3.select('.tooltip')
+                                .style('left', (event.pageX + 10) + 'px')
+                                .style('top', (event.pageY - 10) + 'px');
+                        })
+                        .on('mouseout', function() {
+                            d3.select('.tooltip').style('opacity', 0);
+                        })
+                        .transition()
+                        .duration(1000)
+                        .ease(d3.easeCubicOut)
+                        .attr('width', d => x(d.importance));
+                    
+                    // Axes
+                    g.append('g')
+                        .attr('class', 'axis')
+                        .attr('transform', `translate(0,${chartHeight})`)
+                        .call(d3.axisBottom(x));
+                    
+                    g.append('g')
+                        .attr('class', 'axis')
+                        .call(d3.axisLeft(y));
+                }
+                createImportanceChart();
+            
+
+                // Predictions Chart
+                function createPredictionsChart() {
+                    const container = d3.select('#predictions-chart');
+                    const width = container.node().getBoundingClientRect().width;
+                    const height = 400;
+                    const margin = {top: 20, right: 30, bottom: 50, left: 60};
+                    
+                    const svg = container.append('svg')
+                        .attr('width', width)
+                        .attr('height', height);
+                    
+                    const chartWidth = width - margin.left - margin.right;
+                    const chartHeight = height - margin.top - margin.bottom;
+                    
+                    const g = svg.append('g')
+                        .attr('transform', `translate(${margin.left},${margin.top})`);
+                    
+                    const dataPoints = data.predictions.actual.map((a, i) => ({
+                        actual: a,
+                        predicted: data.predictions.predicted[i],
+                        index: i
+                    }));
+                    
+                    const x = d3.scaleLinear()
+                        .domain([0, dataPoints.length - 1])
+                        .range([0, chartWidth]);
+                    
+                    const yExtent = d3.extent([...data.predictions.actual, ...data.predictions.predicted]);
+                    const y = d3.scaleLinear()
+                        .domain(yExtent)
+                        .range([chartHeight, 0]);
+                    
+                    // Grid
+                    g.append('g')
+                        .attr('class', 'grid')
+                        .call(d3.axisLeft(y).tickSize(-chartWidth).tickFormat(''));
+                    
+                    // Line for actual values
+                    const actualLine = d3.line()
+                        .x((d, i) => x(i))
+                        .y(d => y(d));
+                    
+                    const actualPath = g.append('path')
+                        .datum(data.predictions.actual)
+                        .attr('fill', 'none')
+                        .attr('stroke', '#51cf66')
+                        .attr('stroke-width', 2)
+                        .attr('d', actualLine);
+                    
+                    // Line for predicted values
+                    const predPath = g.append('path')
+                        .datum(data.predictions.predicted)
+                        .attr('fill', 'none')
+                        .attr('stroke', '#4dabf7')
+                        .attr('stroke-width', 2)
+                        .attr('d', actualLine);
+                    
+                    // Animate lines
+                    const totalLength = actualPath.node().getTotalLength();
+                    actualPath
+                        .attr('stroke-dasharray', totalLength)
+                        .attr('stroke-dashoffset', totalLength)
+                        .transition()
+                        .duration(1500)
+                        .ease(d3.easeCubicInOut)
+                        .attr('stroke-dashoffset', 0);
+                    
+                    predPath
+                        .attr('stroke-dasharray', totalLength)
+                        .attr('stroke-dashoffset', totalLength)
+                        .transition()
+                        .duration(1500)
+                        .ease(d3.easeCubicInOut)
+                        .attr('stroke-dashoffset', 0);
+                    
+                    // Axes
+                    g.append('g')
+                        .attr('class', 'axis')
+                        .attr('transform', `translate(0,${chartHeight})`)
+                        .call(d3.axisBottom(x));
+                    
+                    g.append('g')
+                        .attr('class', 'axis')
+                        .call(d3.axisLeft(y));
+                    
+                    // Legend
+                    const legend = svg.append('g')
+                        .attr('transform', `translate(${width - 150}, 20)`);
+                    
+                    legend.append('line')
+                        .attr('x1', 0).attr('x2', 30)
+                        .attr('y1', 0).attr('y2', 0)
+                        .attr('stroke', '#51cf66')
+                        .attr('stroke-width', 2);
+                    
+                    legend.append('text')
+                        .attr('x', 35).attr('y', 5)
+                        .style('fill', 'var(--text-primary)')
+                        .text('Actual');
+                    
+                    legend.append('line')
+                        .attr('x1', 0).attr('x2', 30)
+                        .attr('y1', 20).attr('y2', 20)
+                        .attr('stroke', '#4dabf7')
+                        .attr('stroke-width', 2);
+                    
+                    legend.append('text')
+                        .attr('x', 35).attr('y', 25)
+                        .style('fill', 'var(--text-primary)')
+                        .text('Predicted');
+                }
+                createPredictionsChart();
+            
+    </script>
+</body>
+</html>
